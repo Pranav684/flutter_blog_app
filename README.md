@@ -50,7 +50,7 @@ It allows users to **read, write, and comment on blogs**, with a seamless and re
 ## ⚡ Installation & Setup
 
 ### 🔹 1. Clone the repository
-```bash
+```bash```
 git clone https://github.com/<your-username>/flutter_blog_app.git
 cd flutter_blog_app
 🔹 2. Setup the Flutter frontend
