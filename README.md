@@ -49,40 +49,55 @@ It allows users to **read, write, and comment on blogs**, with a seamless and re
 
 ## ⚡ Installation & Setup
 
-```bash
+
 ### 🔹 1. Clone the repository
+```bash
 git clone https://github.com/<your-username>/flutter_blog_app.git
 cd flutter_blog_app
+```
 🔹 2. Setup the Flutter frontend
+```bash
 cd blog_app
 flutter pub get
 flutter run
+```
 🔹 3. Setup the Node.js backend
+```bash
 cd ../backend
 npm install
 node server.js
+```
 🔹 4. Configure Firebase
+```bash
 Create a Firebase project.
 Enable Authentication and Storage.
 Add your Firebase config to the Flutter project (firebase_options.dart or .env).
+```
 🔹 5. Setup MongoDB
+```bash
 Create a free cluster on MongoDB Atlas.
 Add your connection string to backend/.env:
 MONGO_URI=your_mongodb_connection_string
+```
 🧑‍💻 API Endpoints
+```bash
 Method	Endpoint	Description
 GET	/api/blogs	Fetch all blogs
 POST	/api/blogs	Create new blog
 GET	/api/blogs/:id	Get single blog
 POST	/api/blogs/:id/comment	Add a comment
 DELETE	/api/blogs/:id	Delete blog
+```
 🛠️ Environment Variables
+```bash
 Backend .env file should include:
 PORT=5000
 MONGO_URI=your_mongo_connection_string
 JWT_SECRET=your_secret_key
+```
 📸 Screenshots
-(You can add your app screenshots here — e.g., home screen, blog details, comment popup.)
+```bash
+
 🧠 Future Enhancements
 User profiles and follower system.
 Blog categories & tags.
