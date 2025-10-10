@@ -97,22 +97,22 @@ JWT_SECRET=your_secret_key
 ```
 📸 Screenshots
 ```bash
+```
 
 🧠 Future Enhancements
+```bash
 User profiles and follower system.
 Blog categories & tags.
 Push notifications via Firebase.
 Web dashboard for admin management.
 Dark/light theme switch.
+```
 🧑‍💼 Author
+```bash
 Pranav Srivastava
 Frontend Developer | Flutter, Node.js, Firebase, MongoDB
 🌐 GitHub
-✉️ pranav.srivastava@example.com
-🪪 License
-This project is licensed under the MIT License — feel free to use and modify it.
+✉️ pranavsrivastava684@gmail.com
+```
 
----
-
-Would you like me to **add badges and a project banner (like "Built with Flutter + Firebase")** at the top for a more professional GitHub look?
 
