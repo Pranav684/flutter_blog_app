@@ -1,6 +1,7 @@
 # 📰 Flutter Blog App
 
-A modern **full-stack blog application** built with **Flutter**, **Firebase**, **Node.js**, **Express**, **MongoDB**, and **SQLite**.  
+A modern **full-stack blog application** built with **Flutter**, **Firebase**, **Node.js**, **Express**, **MongoDB**, and **SQLite** — developed using the powerful **Cursor IDE** for enhanced AI-assisted coding and productivity.  
+
 It allows users to **read, write, and comment on blogs**, with a seamless and responsive UI inspired by modern social apps.
 
 ---
@@ -31,6 +32,12 @@ It allows users to **read, write, and comment on blogs**, with a seamless and re
 - **Firebase Auth** for user authentication.
 - **Firebase Storage** for image uploads and blog cover images.
 
+### 💻 Development Environment
+- Built and maintained using **Cursor IDE**, leveraging AI assistance for:
+  - Faster debugging and refactoring.
+  - Auto-completion and documentation.
+  - Multi-language integration (Flutter + Node.js + Firebase).
+
 ---
 
 ## 🧩 Tech Stack
@@ -42,13 +49,11 @@ It allows users to **read, write, and comment on blogs**, with a seamless and re
 | Auth & Cloud | Firebase | Authentication & image storage |
 | Backend | Node.js + Express | REST API services |
 | Database | MongoDB | Main cloud database |
-
----
+| IDE | Cursor | AI-powered development environment |
 
 ---
 
 ## ⚡ Installation & Setup
-
 
 ### 🔹 1. Clone the repository
 ```bash
