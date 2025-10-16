@@ -1,6 +1,5 @@
 import 'package:blog_app/blog/model/blog_model.dart';
 import 'package:blog_app/blog/services/blog_service.dart';
-import 'package:blog_app/feed/models/feed_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,113 +15,171 @@ class _BlogViewState extends ConsumerState<BlogView> {
   Widget build(BuildContext context) {
     var blogDataController = ref.watch(blogDataProvider);
     var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
+        backgroundColor: const Color(0xFF0E0E10),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF0E0E10),
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text('Blog', style: TextStyle(color: Colors.white)),
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
+              Container(
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF141417),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 8,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: height * 0.04,
-                      width: height * 0.04,
-                      margin: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(width: 2),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
                       ),
-                      child: Center(
-                        child: CircleAvatar(
-                          radius: height * 0.02, // circle size
-                          backgroundImage: NetworkImage(
-                            blogDataController!.blog.createdBy.profileImageUrl,
+                      child: Row(
+                        children: [
+                          Container(
+                            height: height * 0.045,
+                            width: height * 0.045,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white24,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Center(
+                              child: CircleAvatar(
+                                radius: height * 0.022,
+                                backgroundImage: NetworkImage(
+                                  blogDataController!
+                                      .blog
+                                      .createdBy
+                                      .profileImageUrl,
+                                ),
+                                backgroundColor: Colors.grey[800],
+                              ),
+                            ),
                           ),
-                          backgroundColor:
-                              Colors.grey[200], // fallback background
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white12,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white24,
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              blogDataController.blog.createdBy.fullName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (blogDataController.blog.coverImageUrl!=null)
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(0),
+                        ),
+                        child: Image.network(
+                          blogDataController.blog.coverImageUrl!,
+                          width: double.infinity,
                         ),
                       ),
-                    ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        blogDataController.blog.createdBy.fullName,
-                        style: TextStyle(color: Colors.black),
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            blogDataController.blog.title,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          SelectableText(
+                            blogDataController.blog.body,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              height: 1.5,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-              Image.network(blogDataController.blog.coverImageUrl),
-              SelectableText.rich(
-                TextSpan(
-                  
-                  children: [
-                    TextSpan(
-                      text: "${blogDataController.blog.title}\n",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: blogDataController.blog.body,
-                      style: TextStyle(fontSize: 16, height: 1.4),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
         floatingActionButton: GestureDetector(
           onTap: () async {
-            List<Comment> reversedComments=blogDataController.comments.reversed.toList();
+            List<Comment> reversedComments = blogDataController
+                .comments
+                .reversed
+                .toList();
             await showModalBottomSheet(
               context: context,
-              isScrollControlled:
-                  true, // 👈 allows full height when keyboard opens
-              backgroundColor:
-                  Colors.transparent, // 👈 for rounded corners effect
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
               builder: (context) =>
                   CommentBottomSheet(comments: reversedComments),
             );
             setState(() {});
           },
           child: Container(
-            margin: EdgeInsets.all(8),
-            padding: EdgeInsets.all(2),
-            width: width * 0.20,
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color.fromARGB(255, 152, 152, 152),
-                  offset: Offset.zero,
-                  blurRadius: 1,
-                  spreadRadius: 0,
-                  blurStyle: BlurStyle.outer,
-                ),
+              color: const Color(0xFF1A1A1D),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: Colors.white24, width: 1),
+              boxShadow: const [
+                BoxShadow(color: Colors.black54, blurRadius: 6),
               ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    "assets/icons/comment_icon.png",
-                    height: height * 0.04,
-                  ),
+                Image.asset(
+                  "assets/icons/comment_icon.png",
+                  color: Colors.white,
+                  height: 35,
                 ),
+                const SizedBox(width: 8),
                 Text(
                   "${blogDataController.comments.length}",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -146,12 +203,17 @@ class CommentBottomSheet extends ConsumerWidget {
       minChildSize: 0.4,
       maxChildSize: 0.95, // can drag up almost full screen
       builder: (context, scrollController) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-          ),
-          child: Column(
+        final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+        return AnimatedPadding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFF141417),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+            ),
+            child: Column(
             children: [
               // small grey drag handle
               Container(
@@ -159,7 +221,7 @@ class CommentBottomSheet extends ConsumerWidget {
                 height: 5,
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.grey[400],
+                  color: Colors.white24,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -175,26 +237,29 @@ class CommentBottomSheet extends ConsumerWidget {
                         comments[index].createdBy.profileImageUrl,
                       ),
                     ),
-                    title: Text(comments[index].createdBy.fullName),
-                    subtitle: Text(comments[index].content),
+                    title: Text(
+                      comments[index].createdBy.fullName,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      comments[index].content,
+                      style: const TextStyle(color: Colors.white70),
+                    ),
                   ),
                 ),
               ),
 
               // comment input bar (like Instagram)
               Padding(
-                padding: EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-                ),
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset(
                         "assets/icons/comment_icon.png",
-                        height: 30,
+                        color: Colors.white,
+                        height: 20,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -203,17 +268,27 @@ class CommentBottomSheet extends ConsumerWidget {
                         controller: commentController,
                         decoration: InputDecoration(
                           hintText: 'Add a comment...',
+                          hintStyle: TextStyle(color: Colors.grey[400]),
                           filled: true,
-                          fillColor: Colors.grey[200],
+                          fillColor: const Color(0xFF1A1A1D),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 15,
                             vertical: 8,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
+                            borderSide: const BorderSide(color: Colors.white24),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: const BorderSide(color: Colors.white24),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: const BorderSide(color: Colors.white54),
                           ),
                         ),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -236,17 +311,14 @@ class CommentBottomSheet extends ConsumerWidget {
                           Navigator.of(context).pop();
                         }
                       },
-                      icon: Icon(
-                        Icons.send_rounded,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                      icon: const Icon(Icons.send_rounded, color: Colors.white),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-        );
+        ));
       },
     );
   }

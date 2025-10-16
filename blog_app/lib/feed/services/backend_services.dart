@@ -12,7 +12,7 @@ class BlogApiClient {
 
   static Future<dynamic> getAllBlogsServices(
   ) async {
-    try {
+   
       var token = await LocalStorage.getToken();
       print(token);
       var response = await http.get(
@@ -28,6 +28,7 @@ class BlogApiClient {
      
         return allBlogs;
       }
+       try {
     } catch (e) {
       return HttpException("Blog Not Uploaded!");
     }

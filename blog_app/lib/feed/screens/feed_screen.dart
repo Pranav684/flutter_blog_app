@@ -2,6 +2,7 @@ import 'package:blog_app/blog/model/blog_model.dart';
 import 'package:blog_app/blog/screens/blog_view.dart';
 import 'package:blog_app/blog/services/blog_service.dart';
 import 'package:blog_app/feed/models/feed_model.dart';
+import 'package:blog_app/feed/services/backend_services.dart' as feed_api;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,17 +14,30 @@ class FeedScreen extends ConsumerStatefulWidget {
 }
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
+  Future<void> _refreshBlogs() async {
+    final blogs = await feed_api.BlogApiClient.getAllBlogsServices();
+    if (!mounted) return;
+    print(blogs.runtimeType);
+    print(blogs.runtimeType);
+    print(blogs.runtimeType);
+    if (blogs is Blogs) {
+      ref.read(blogsProvider.notifier).getBlogsFromDb(blogs);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to refresh feed')));
+    }
+  }
 
-
-    void _getBlogData(blogId) async {
+  void _getBlogData(blogId) async {
     BlogData response = await BlogDataApiClient.getBlogById(blogId);
     if (!mounted) return;
 
     if (response.success) {
-    ref.read(blogDataProvider.notifier).setBlogData(response);
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => BlogView()),
-      );
+      ref.read(blogDataProvider.notifier).setBlogData(response);
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (ctx) => BlogView()));
     } else {
       ScaffoldMessenger.of(
         context,
@@ -31,69 +45,60 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var blogController = ref.watch(blogsProvider);
-    return Container(
-      decoration: BoxDecoration(
-        // color: Theme.of(context).colorScheme.secondary
-      ),
-      child: ListView.builder(
-        itemCount: blogController == null ? 0 : blogController.blogs.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () async{
-              _getBlogData(blogController.blogs[index].id);
-            },
-            child: Container(
-              // height: height*0.25,
-              width: double.infinity,
-              margin: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).colorScheme.onPrimary,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 152, 152, 152),
-                    offset: Offset.zero,
-                    blurRadius: 1,
-                    spreadRadius: 0,
-                    blurStyle: BlurStyle.outer,
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    alignment: AlignmentGeometry.topLeft,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadiusGeometry.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        ),
-                        child: Image.network(
-                          blogController!.blogs[index].coverImageUrl,
-                          width: double.infinity,
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 214, 214, 214).withValues(
-                            alpha: 0.2,
-                          ), // transparent color
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 206, 206, 206).withValues(
-                              alpha: 0.3,
-                            ), // subtle border
-                            width: 1.5,
+    return RefreshIndicator(
+      onRefresh: _refreshBlogs,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF0E0E10),
+        ),
+        child: ListView.builder(
+          itemCount: blogController == null ? 0 : blogController.blogs.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () async {
+                _getBlogData(blogController.blogs[index].id);
+              },
+              child: Container(
+                // height: height*0.25,
+                width: double.infinity,
+                margin: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color(0xFF1A1A1D),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 152, 152, 152),
+                      offset: Offset.zero,
+                      blurRadius: 1,
+                      spreadRadius: 0,
+                      blurStyle: BlurStyle.outer,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      alignment: AlignmentGeometry.topLeft,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadiusGeometry.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
+                          child:
+                              blogController!.blogs[index].coverImageUrl == null
+                              ? SizedBox()
+                              : Image.network(
+                                  blogController.blogs[index].coverImageUrl!,
+                                  width: double.infinity,
+                                ),
                         ),
-                        child: Row(
+                        Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
@@ -118,36 +123,59 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                                 ),
                               ),
                             ),
-                            Padding(
+                            Container(
                               padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 154, 154, 154).withValues(alpha: 0.2), // transparent color
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: const Color.fromARGB(255, 137, 137, 137).withValues(alpha: 0.3), // subtle border
+                                  width: 1.5,
+                                ),
+                              ),
                               child: Text(
                                 blogController.blogs[index].createdBy.fullName,
-                                style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    255,
+                                    255,
+                                    255,
+                                  ),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          blogController.blogs[index].title,
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        Text(blogController.blogs[index].body),
                       ],
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            blogController.blogs[index].title,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            blogController.blogs[index].body,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+          physics: const AlwaysScrollableScrollPhysics(),
+        ),
       ),
     );
   }

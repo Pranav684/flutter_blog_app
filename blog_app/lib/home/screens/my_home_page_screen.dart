@@ -36,15 +36,18 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     });
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.onSurface,
+        backgroundColor: const Color.fromARGB(244, 0, 0, 0),
         title: Text(
           widget.title,
-          style: TextStyle(color: Theme.of(context).colorScheme.surface),
+          style: TextStyle(color: Colors.grey[500],),
         ),
       ),
       body: bottomNavigationBarCurrentIndex==1?AddBlogScreen():bottomNavigationBarCurrentIndex==2? ProfileScreen():FeedScreen(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: bottomNavigationBarCurrentIndex,
+        backgroundColor: const Color.fromARGB(244, 0, 0, 0),
+        unselectedItemColor: const Color.fromARGB(255, 58, 58, 58),
+        selectedItemColor: Colors.grey[500],
         onTap:
             (value) => setState(() {
               bottomNavigationBarCurrentIndex = value;

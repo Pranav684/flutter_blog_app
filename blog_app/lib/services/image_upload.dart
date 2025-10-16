@@ -17,10 +17,11 @@ Future<String?> uploadImage(File imageFile) async {
     final ref = FirebaseStorage.instance.ref().child("uploads/$fileName.jpg");
 
     // Upload file
-    final uploadTask = await ref.putFile(imageFile);
+    await ref.putFile(imageFile);
 
     // Get download URL
     final downloadUrl = await ref.getDownloadURL();
+    print(downloadUrl);
     return downloadUrl;
   } catch (e) {
     print("Upload failed: $e");

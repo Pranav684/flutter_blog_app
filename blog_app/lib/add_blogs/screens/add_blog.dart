@@ -27,8 +27,9 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
   File? coverImageFile;
   String? coverImageUrl;
   bool triedSubmittingOnce = false;
+  bool isUploading = false;
 
-  void uploadBlog(String userId) async {
+  Future<void> uploadBlog(String userId) async {
     var resopnse = await BlogApiClient.uploadBlogService(
       _titleController.text,
       _descriptionController.text,
@@ -49,187 +50,247 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
-    int paddingSizeHorizontal = 10;
-    int labelFontSize = 60;
+    var screenHeight = MediaQuery.of(context).size.height;
+    int paddingSizeHorizontal = 14;
     var userData = ref.read(userProvider);
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Column(
-          children: [
-            Stack(
-              alignment: AlignmentGeometry.topRight,
-              children: [
-                Container(
-                  height: screenHeight * 0.40,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 245, 229, 237),
-                  ),
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () async {
-                        var imgFile = await pickImage();
-                        setState(() {
-                          coverImageFile = imgFile;
-                        });
-                      },
-                      child: coverImageFile != null
-                          ? Image.file(coverImageFile!, fit: BoxFit.contain)
-                          : Icon(
-                              Icons.add_photo_alternate_rounded,
-                              size: screenHeight * 0.20,
-                              color: Colors.grey,
-                            ),
-                    ),
-                  ),
-                ),
-                coverImageFile != null
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              coverImageFile = null;
-                            });
-                          },
-                          child: Icon(Icons.cancel),
-                        ),
-                      )
-                    : SizedBox(),
-              ],
+    Future<void> handleSubmit() async {
+      triedSubmittingOnce = true;
+      setState(() {});
+      if (_titleController.text.trim().isEmpty ||
+          _descriptionController.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please add a title and body')),
+        );
+        return;
+      }
+      if (coverImageFile == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please add an image')),
+        );
+        return;
+      }
+      if (userData == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not found')),
+        );
+        return;
+      }
+      setState(() {
+        isUploading = true;
+      });
+      try {
+        if (coverImageFile != null) {
+          coverImageUrl = await uploadImage(coverImageFile!);
+        }
+        await uploadBlog(userData.userid);
+      } finally {
+        if (mounted) {
+          setState(() {
+            isUploading = false;
+          });
+        }
+      }
+    }
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF0E0E10),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0E0E10),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          if (isUploading)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              ),
+            )
+          else
+            OutlinedButton.icon(
+              onPressed: handleSubmit,
+              icon:  Icon(Icons.send_rounded, size: 18, color: Colors.grey[500]),
+              label:  Text(
+                'Post',
+                style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey[500]),
+              ),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white10,
+                side: const BorderSide(color: Colors.white24, width: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                shape: const StadiumBorder(),
+              ),
             ),
-            if (coverImageFile == null && triedSubmittingOnce)
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "Please attach and image to be uploaded!",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-          ],
-        ),
-        SizedBox(
-          height: screenHeight * 0.35,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.max,
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth / paddingSizeHorizontal,
+            vertical: 12,
+          ),
+          child: Stack(
+            alignment: Alignment.topRight,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Form(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: screenWidth / paddingSizeHorizontal,
-                            right: screenWidth / paddingSizeHorizontal,
-                          ),
-                          child: TextFormField(
-                            controller: _titleController,
-                            decoration: InputDecoration(
-                              label: Text(
-                                "Title",
-                                style: TextStyle(
-                                  fontSize: screenHeight / labelFontSize,
-                                ),
-                              ),
-                            ),
-                          ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: const Color(0xFF1A1A1D),
+                        child: Text(
+                          ((userData?.userName.isNotEmpty == true
+                                      ? userData!.userName[0]
+                                      : 'U')
+                                  .toUpperCase()),
+                          style:  TextStyle(color: Colors.grey[500]),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: screenWidth / paddingSizeHorizontal,
-                            right: screenWidth / paddingSizeHorizontal,
-                          ),
-                          child: TextField(
-                            controller: _descriptionController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null, // ✅ allows automatic line wrapping
-                            expands:
-                                false, // keep it growing only when text exceeds one line
-                            decoration: InputDecoration(
-                                label: Text(
-                                  "Description",
-                                  style: TextStyle(
-                                    fontSize: screenHeight / labelFontSize,
-                                  ),
-                                ),
-                              ),
-                          ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Expanded(
+                      //   child: OutlinedButton.icon(
+                      //     onPressed: () {
+                      //       // Placeholder for selecting a community like Reddit
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         const SnackBar(
+                      //           content: Text('Community picker not implemented'),
+                      //         ),
+                      //       );
+                      //     },
+                      //     icon: const Icon(Icons.group_outlined),
+                      //     label: Align(
+                      //       alignment: Alignment.centerLeft,
+                      //       child: Text(
+                      //         'Choose a community',
+                      //         style: TextStyle(
+                      //           color: Theme.of(context).colorScheme.onSurface,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     style: OutlinedButton.styleFrom(
+                      //       padding: const EdgeInsets.symmetric(
+                      //         horizontal: 12,
+                      //         vertical: 10,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  SizedBox(height: screenHeight*0.05),
+                  SizedBox(
+                    width: screenWidth*0.60,
+                    child: TextField(
+                      controller: _titleController,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Add a descriptive title',
+                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        filled: true,
+                        fillColor: const Color(0xFF1A1A1D),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
                         ),
-                              
-                        // Padding(
-                        //   padding: EdgeInsets.only(
-                        //     left: screenWidth / paddingSizeHorizontal,
-                        //     right: screenWidth / paddingSizeHorizontal,
-                        //   ),
-                        //   child: TextFormField(
-                        //     // controller: _descriptionController,
-                        //     decoration: InputDecoration(
-                        //       label: Text(
-                        //         "Description",
-                        //         style: TextStyle(
-                        //           fontSize: screenHeight / labelFontSize,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        if ((_titleController.text.isEmpty ||
-                                _descriptionController.text.isEmpty) &&
-                            triedSubmittingOnce)
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Text(
-                              "Please attach and image to be uploaded!",
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  triedSubmittingOnce = true;
-                  if (_titleController.text.isEmpty ||
-                      _descriptionController.text.isEmpty ||
-                      coverImageFile == null) {
-                    setState(() {});
-                    return;
-                  }
-                  if (coverImageFile != null) {
-                    coverImageUrl = (await uploadImage(coverImageFile!))!;
-                  }
-                  uploadBlog(userData!.userid);
-                },
-                child: Container(
-                  height: screenHeight / 20,
-                  width: screenWidth / 3,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Submit",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.surface,
-                        fontSize: screenHeight / 50,
                       ),
                     ),
+                  ),
+                  Divider(height: 16, color: Colors.grey[800]),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _descriptionController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    style: const TextStyle(color: Colors.white,fontSize: 15),
+                    decoration: InputDecoration(
+                      hintText: 'Share your thoughts...'
+                          ,
+                      hintStyle: TextStyle(color: Colors.grey[500]),
+                      filled: true,
+                      fillColor: const Color(0xFF1A1A1D),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  if ((_titleController.text.trim().isEmpty ||
+                          _descriptionController.text.trim().isEmpty ||
+                          coverImageFile == null) &&
+                      triedSubmittingOnce)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Please complete all fields and add an image',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              ),
+              if (isUploading)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.4),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
+                ),
+              GestureDetector(
+                onTap: () async {
+                  var imgFile = await pickImage();
+                  setState(() {
+                    coverImageFile = imgFile;
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.grey[700]!,
+                    ),
+                    color: const Color(0xFF1A1A1D),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: coverImageFile == null
+                        ?  Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.add_photo_alternate, color: Colors.grey[500]),
+                          )
+                        : ClipOval(
+                            child: Image.file(
+                              coverImageFile!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

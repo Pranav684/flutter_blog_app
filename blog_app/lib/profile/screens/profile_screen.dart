@@ -19,6 +19,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // var width = MediaQuery.of(context).size.width;
     var userData = ref.read(userProvider);
     return Scaffold(
+      backgroundColor: const Color(0xFF0E0E10),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0E0E10),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -26,17 +32,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             margin: EdgeInsets.all(8),
             // padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.primary.withAlpha(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: Offset.zero,
-                  blurRadius: 1,
-                  spreadRadius: 0,
-                  blurStyle: BlurStyle.outer,
-                ),
-              ],
+              borderRadius: BorderRadius.circular(12),
+              color: const Color(0xFF141417),
+              border: Border.all(color: Colors.white24, width: 1),
             ),
             child: Row(
               children: [
@@ -48,7 +46,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     margin: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(width: 2),
+                      border: Border.all(color: Colors.white24, width: 1.5),
                     ),
                     child: Center(
                       child: CircleAvatar(
@@ -56,8 +54,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         backgroundImage: NetworkImage(
                           userData!.profileImageUrl,
                         ),
-                        backgroundColor:
-                            Colors.grey[200], // fallback background
+                        backgroundColor: Colors.grey[800], // fallback background
                       ),
                     ),
                   ),
@@ -69,13 +66,48 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(userData.userName),
-                        Text(userData.emailAddress),
+                        Text(
+                          userData.userName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          userData.emailAddress,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF141417),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white24, width: 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    title: const Text('Role', style: TextStyle(color: Colors.white70)),
+                    subtitle: Text(userData.role, style: const TextStyle(color: Colors.white)),
+                  ),
+                  const Divider(color: Colors.white24, height: 1),
+                  ListTile(
+                    title: const Text('User ID', style: TextStyle(color: Colors.white70)),
+                    subtitle: Text(userData.userid, style: const TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
             ),
           ),
           GestureDetector(
@@ -92,11 +124,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               width: double.infinity,
               margin: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurface,
-                borderRadius: BorderRadius.circular(10),
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white24, width: 1),
               ),
               child: Center(
-                child: Text("Log Out", style: TextStyle(color: Colors.white)),
+                child: Text(
+                  "Log Out",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                ),
               ),
             ),
           ),

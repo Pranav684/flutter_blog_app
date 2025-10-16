@@ -52,7 +52,7 @@ class Blog {
     String id;
     String title;
     String body;
-    String coverImageUrl;
+    String? coverImageUrl;
     CreatedBy createdBy;
     DateTime createdAt;
     DateTime updatedAt;
