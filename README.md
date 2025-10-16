@@ -97,6 +97,9 @@ JWT_SECRET=your_secret_key
 ```
 📸 Screenshots
 ```bash
+<img width="493" height="212" alt="Screenshot 2025-10-17 at 1 50 57 AM" src="https://github.com/user-attachments/assets/c55e7798-74ae-45ac-b763-6b895071d184" />
+
+
 ```
 
 🧠 Future Enhancements
