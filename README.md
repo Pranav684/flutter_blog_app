@@ -96,11 +96,10 @@ MONGO_URI=your_mongo_connection_string
 JWT_SECRET=your_secret_key
 ```
 📸 Screenshots
-```bash
-<img width="493" height="212" alt="Screenshot 2025-10-17 at 1 50 57 AM" src="https://github.com/user-attachments/assets/c55e7798-74ae-45ac-b763-6b895071d184" />
+<img width="415" height="857" alt="Screenshot 2025-10-17 at 1 52 27 AM" src="https://github.com/user-attachments/assets/2172531b-fe56-4103-ba0d-0ce3bd32e7d3" />
+<img width="413" height="848" alt="Screenshot 2025-10-17 at 1 53 26 AM" src="https://github.com/user-attachments/assets/eff9b2a9-c0e4-47d6-b58d-5400be0f57fa" />
+<img width="411" height="842" alt="Screenshot 2025-10-17 at 1 53 53 AM" src="https://github.com/user-attachments/assets/7d547f97-adcc-48da-8a38-d632f6863209" />
 
-
-```
 
 🧠 Future Enhancements
 ```bash
