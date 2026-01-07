@@ -1,3 +1,4 @@
+import 'package:blog_app/utility/constants/constant_text.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:blog_app/splash/screens/splash_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Blogify',
+      title: AppText.appName,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
       ),

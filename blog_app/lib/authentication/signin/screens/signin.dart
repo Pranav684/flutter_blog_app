@@ -3,6 +3,8 @@ import 'package:blog_app/authentication/signup/screens/signup.dart';
 import 'package:blog_app/home/screens/my_home_page_screen.dart';
 import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/services/local_storage.dart';
+import 'package:blog_app/utility/constants/constant_value.dart';
+import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -38,9 +40,9 @@ class _SignInScreenState extends State<SignInScreen> {
       ).showSnackBar(SnackBar(content: Text('Form Submitted Successfully!')));
       LocalStorage.saveToken(response['token']);
       LocalDb.saveUserData(response['user']);
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => MyHomePage(title: "Blogify")),
-      );
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (ctx) => MyHomePage(title: "Blogify")));
     } else {
       ScaffoldMessenger.of(
         context,
@@ -55,130 +57,136 @@ class _SignInScreenState extends State<SignInScreen> {
     int paddingSizeHorizontal = 10;
     int labelFontSize = 60;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Sign In",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.surface,
-            fontSize: screenHeight / 30,
+      backgroundColor: AppColors.offWhiteColor,
+      body: SizedBox(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  left: screenWidth / paddingSizeHorizontal,
+                  right: screenWidth / paddingSizeHorizontal,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical:16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(
+                              height: 45,
+                              width: 45,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.greyColor,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(child: Icon(Icons.arrow_back_ios, color: AppColors.blackColor,)),
+                            ),
+                          ),
+                          
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "Welcome back! Glad to see you, Again!",
+                      style: AppValue.largeTextStyle,
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            label: Text(
+                              "Email",
+                              style: TextStyle(
+                                fontSize: screenHeight / labelFontSize,
+                              ),
+                            ),
+                          ),
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            label: Text(
+                              "Password",
+                              style: TextStyle(
+                                fontSize: screenHeight / labelFontSize,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      _submitForm();
+                    },
+                    child: Container(
+                      height: screenHeight / 20,
+                      width: screenWidth / 3,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Submit",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.surface,
+                            fontSize: screenHeight / 50,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account?"),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (ctx) => SignUpScreen()),
+                          );
+                        },
+                        child: Text(
+                          " Sign Up",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.onSurface,
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: screenHeight / 6,
-                  width: screenHeight / 6,
-                  margin: EdgeInsets.all(screenWidth / paddingSizeHorizontal),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 5,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.person,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: screenHeight / 8,
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: screenWidth / paddingSizeHorizontal,
-                        right: screenWidth / paddingSizeHorizontal,
-                      ),
-                      child: TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          label: Text(
-                            "Email",
-                            style: TextStyle(
-                              fontSize: screenHeight / labelFontSize,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: screenWidth / paddingSizeHorizontal,
-                        right: screenWidth / paddingSizeHorizontal,
-                      ),
-                      child: TextFormField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          label: Text(
-                            "Password",
-                            style: TextStyle(
-                              fontSize: screenHeight / labelFontSize,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _submitForm();
-                  },
-                  child: Container(
-                    height: screenHeight / 20,
-                    width: screenWidth / 3,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Submit",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.surface,
-                          fontSize: screenHeight / 50,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Don't have an account?"),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (ctx) => SignUpScreen()),
-                        );
-                      },
-                      child: Text(
-                        " Sign Up",
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+      bottomNavigationBar: Container(
+        height: screenHeight / 15,
+        decoration: BoxDecoration(color: AppColors.blackColor),
+        child: Center(
+          child: Text(
+            "Blogify @2026",
+            style: TextStyle(color: AppColors.offWhiteColor),
+          ),
         ),
       ),
     );
