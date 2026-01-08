@@ -1,4 +1,5 @@
 import 'package:blog_app/authentication/signin/screens/signin.dart';
+import 'package:blog_app/authentication/signup/screens/signup.dart';
 import 'package:blog_app/utility/constants/constant_text.dart';
 import 'package:blog_app/utility/constants/constant_value.dart';
 import 'package:blog_app/utility/theme/colors.dart';
@@ -184,19 +185,22 @@ class _OptionScreenState extends State<OptionScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  height: 60,
-                  width: 220,
-                  decoration: BoxDecoration(
-                    color: AppColors.blackColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.blackColor, width: 1.5),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Register',
-                      style: AppValue.mediumTextStyle.copyWith(
-                        color: AppColors.whiteColor,
+                GestureDetector(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx)=>SignUpScreen())),
+                  child: Container(
+                    height: 60,
+                    width: 220,
+                    decoration: BoxDecoration(
+                      color: AppColors.blackColor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.blackColor, width: 1.5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Register',
+                        style: AppValue.mediumTextStyle.copyWith(
+                          color: AppColors.whiteColor,
+                        ),
                       ),
                     ),
                   ),

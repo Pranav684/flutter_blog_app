@@ -19,12 +19,20 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   @override
   void initState() {
     super.initState();
-    bool isUserLoggedIn = false;
 
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _startFluctuation();
+
+    bool isUserLoggedIn = false;
     Future<void> getUserToken() async {
       dynamic token = await LocalStorage.getToken();
       if (token == null) {
@@ -43,7 +51,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     });
 
     Timer(
-      Duration(seconds: 2),
+      Duration(seconds: 3),
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -56,32 +64,52 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startFluctuation() async {
+    for (int i = 0; i < 3; i++) {
+      await _controller.forward();
+      await _controller.reverse();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SizedBox(
         height: double.infinity,
         child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppText.appName,
-                style: TextStyle(
-                  color: AppColors.blackColor,
-                  fontSize: AppValue.superLargeSize,
-                  fontWeight: FontWeight.bold,
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppText.appName,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: AppColors.blackColor,
+                    fontSize: AppValue.superLargeSize,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                ".",
-                style: TextStyle(
-                  color: AppColors.redColor,
-                  fontSize: AppValue.superLargeSize,
-                  fontWeight: FontWeight.bold,
+                FadeTransition(
+                  opacity: _controller,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.redColor,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

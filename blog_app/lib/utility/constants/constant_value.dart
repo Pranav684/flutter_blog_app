@@ -17,7 +17,21 @@ class AppValue {
   );
   static TextStyle smallTextStyle = TextStyle(
     color: AppColors.blackColor,
-    fontSize:smallTextSize,
+    fontSize: smallTextSize,
   );
-  
+  static InputDecoration inputDecoration = InputDecoration(
+    filled: true,
+    fillColor: AppColors.greyColor.withAlpha(50),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppColors.greyColor.withAlpha(100),
+        width: 2,
+      ),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.blackColor, width: 2),
+      borderRadius: BorderRadius.circular(10),
+    ),
+  );
 }

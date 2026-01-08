@@ -58,71 +58,139 @@ class _SignInScreenState extends State<SignInScreen> {
     int labelFontSize = 60;
     return Scaffold(
       backgroundColor: AppColors.offWhiteColor,
-      body: SizedBox(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  left: screenWidth / paddingSizeHorizontal,
-                  right: screenWidth / paddingSizeHorizontal,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+      body: SingleChildScrollView(
+        child: SizedBox(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical:16.0),
-                      child: Row(
+                      padding: EdgeInsets.only(
+                        left: screenWidth / paddingSizeHorizontal,
+                        right: screenWidth / paddingSizeHorizontal,
+                      ),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child: Container(
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.greyColor,
-                                  width: 2,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 100.0,
+                              bottom: 50,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: AppColors.greyColor,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.arrow_back_ios,
+                                        color: AppColors.blackColor,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(child: Icon(Icons.arrow_back_ios, color: AppColors.blackColor,)),
+                              ],
                             ),
                           ),
-                          
+                          Text(
+                            "Welcome back! Glad to see you, Again!",
+                            style: AppValue.largeTextStyle,
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 20.0,
+                                  bottom: 5,
+                                ),
+                                child: TextFormField(
+                                  controller: _emailController,
+                                  cursorColor: AppColors.blackColor,
+                                  decoration: AppValue.inputDecoration.copyWith(
+                                    label: Text(
+                                      "Email",
+                                      style: TextStyle(
+                                        fontSize: screenHeight / labelFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 5,
+                                  bottom: 10,
+                                ),
+                                child: TextFormField(
+                                  controller: _passwordController,
+                                  decoration: AppValue.inputDecoration.copyWith(
+                                    label: Text(
+                                      "Password",
+                                      style: TextStyle(
+                                        fontSize: screenHeight / labelFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Forget Password?',
+                                    style: AppValue.smallTextStyle.copyWith(
+                                      color: AppColors.darkGreyColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-                    Text(
-                      "Welcome back! Glad to see you, Again!",
-                      style: AppValue.largeTextStyle,
-                    ),
+                    SizedBox(height: 150),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            label: Text(
-                              "Email",
-                              style: TextStyle(
-                                fontSize: screenHeight / labelFontSize,
+                        GestureDetector(
+                          onTap: () {
+                            _submitForm();
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 220,
+                            decoration: BoxDecoration(
+                              color: AppColors.blackColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.blackColor,
+                                width: 1.5,
                               ),
                             ),
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            label: Text(
-                              "Password",
-                              style: TextStyle(
-                                fontSize: screenHeight / labelFontSize,
+                            child: Center(
+                              child: Text(
+                                'Submit',
+                                style: AppValue.mediumTextStyle.copyWith(
+                                  color: AppColors.whiteColor,
+                                ),
                               ),
                             ),
                           ),
@@ -131,35 +199,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-              ),
-              Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _submitForm();
-                    },
-                    child: Container(
-                      height: screenHeight / 20,
-                      width: screenWidth / 3,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Submit",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.surface,
-                            fontSize: screenHeight / 50,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account?"),
+                      Text(
+                        "Don't have an account?",
+                        style: AppValue.smallTextStyle,
+                      ),
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).pushReplacement(
@@ -168,14 +216,16 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                         child: Text(
                           " Sign Up",
-                          style: TextStyle(color: Colors.blue),
+                          style: AppValue.smallTextStyle.copyWith(
+                            color: AppColors.orangeColor,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

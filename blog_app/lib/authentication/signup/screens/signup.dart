@@ -6,6 +6,8 @@ import 'package:blog_app/home/screens/my_home_page_screen.dart';
 import 'package:blog_app/services/image_upload.dart';
 import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/services/local_storage.dart';
+import 'package:blog_app/utility/constants/constant_value.dart';
+import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -100,184 +102,258 @@ class _SignUpScreenState extends State<SignUpScreen> {
     int paddingSizeHorizontal = 10;
     int labelFontSize = 60;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Sign Up",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.surface,
-            fontSize: screenHeight / 30,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.onSurface,
-      ),
+      backgroundColor: AppColors.offWhiteColor,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(
+                  left: screenWidth / paddingSizeHorizontal,
+                  right: screenWidth / paddingSizeHorizontal,
+                ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      height: screenHeight / 6,
-                      width: screenHeight / 6,
-                      margin: EdgeInsets.all(screenWidth / paddingSizeHorizontal),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          width: 5,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            imageFile!=null?CircleAvatar(
-                              backgroundImage: FileImage(imageFile!),
-                              radius: screenHeight/12,
-                            ):Icon(
-                              Icons.person,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              size: screenHeight / 8,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 100.0, bottom: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.greyColor,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: AppColors.blackColor,
+                                ),
+                              ),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                imageFile = await pickImage();
-                                setState(() {
-                                  
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(10),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "Hello! Register to get started",
+                      style: AppValue.largeTextStyle,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: 220,
+                                width: 220,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
+                                  gradient: RadialGradient(
+                                    colors: [
+                                      AppColors.redColor,
+                                      AppColors.orangeColor,
+                                      AppColors.offWhiteColor,
+                                    ],
+                                    stops: [0.2, 0.55, 1.0],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                              Container(
+                                height: 138,
+                                width: 138,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 255, 153, 80),
+                                      Color.fromARGB(255, 255, 80, 80),
+                                      Color.fromARGB(255, 255, 80, 185),
+                                      Color.fromARGB(255, 159, 81, 255),
+                                    ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.orangeColor.withAlpha(
+                                        126,
+                                      ),
+                                      blurRadius: 30,
+                                    ),
+                                  ],
+
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              Container(
+                                height: 130,
+                                width: 130,
+                                margin: EdgeInsets.all(
+                                  screenWidth / paddingSizeHorizontal,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.offWhiteColor,
+
+                                  shape: BoxShape.circle,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    imageFile = await pickImage();
+                                    setState(() {});
+                                  },
+                                  child: imageFile != null
+                                      ? CircleAvatar(
+                                          backgroundImage: FileImage(
+                                            imageFile!,
+                                          ),
+                                          radius: screenHeight / 12,
+                                        )
+                                      : Icon(
+                                          Icons.photo_camera_outlined,
+                                          color: AppColors.blackColor,
+                                          size: screenHeight / 20,
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8.0,
+                                  bottom: 2.0,
+                                ),
+                                child: TextFormField(
+                                  controller: _fullNameController,
+                                  decoration: AppValue.inputDecoration.copyWith(
+                                    label: Text(
+                                      "Full Name",
+                                      style: TextStyle(
+                                        fontSize: screenHeight / labelFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 2.0,
+                                  bottom: 2.0,
+                                ),
+                                child: TextFormField(
+                                  controller: _emailController,
+                                  decoration: AppValue.inputDecoration.copyWith(
+                                    label: Text(
+                                      "Email",
+                                      style: TextStyle(
+                                        fontSize: screenHeight / labelFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                  validator: _emailValidation,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 2.0,
+                                  bottom: 8.0,
+                                ),
+                                child: TextFormField(
+                                  controller: _passwordController,
+                                  decoration: AppValue.inputDecoration.copyWith(
+                                    label: Text(
+                                      "Password",
+                                      style: TextStyle(
+                                        fontSize: screenHeight / labelFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                  validator: _passwordValidation,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: screenWidth / paddingSizeHorizontal,
-                            right: screenWidth / paddingSizeHorizontal,
-                          ),
-                          child: TextFormField(
-                            controller: _fullNameController,
-                            decoration: InputDecoration(
-                              label: Text(
-                                "Full Name",
-                                style: TextStyle(
-                                  fontSize: screenHeight / labelFontSize,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await _submitForm();
+                            },
+                            child: Container(
+                              height: 60,
+                              width: 220,
+                              decoration: BoxDecoration(
+                                color: AppColors.blackColor,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: AppColors.blackColor,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Submit',
+                                  style: AppValue.mediumTextStyle.copyWith(
+                                    color: AppColors.whiteColor,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: screenWidth / paddingSizeHorizontal,
-                            right: screenWidth / paddingSizeHorizontal,
-                          ),
-                          child: TextFormField(
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              label: Text(
-                                "Email",
-                                style: TextStyle(
-                                  fontSize: screenHeight / labelFontSize,
-                                ),
-                              ),
-                            ),
-                            validator: _emailValidation,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: screenWidth / paddingSizeHorizontal,
-                            right: screenWidth / paddingSizeHorizontal,
-                          ),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                              label: Text(
-                                "Password",
-                                style: TextStyle(
-                                  fontSize: screenHeight / labelFontSize,
-                                ),
-                              ),
-                            ),
-                            validator: _passwordValidation,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        await _submitForm();
-                      },
-                      child: Container(
-                        height: screenHeight / 20,
-                        width: screenWidth / 3,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Submit",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface,
-                              fontSize: screenHeight / 50,
-                            ),
-                          ),
-                        ),
-                      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Already have an account?", style: AppValue.smallTextStyle,),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (ctx) => SignInScreen()),
+                      );
+                    },
+                    child: Text(
+                      " Sign In",
+                      style: AppValue.smallTextStyle.copyWith(color: AppColors.orangeColor),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Already have an account?"),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (ctx) => SignInScreen()),
-                            );
-                          },
-                          child: Text(
-                            " Sign In",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: screenHeight / 15,
+        decoration: BoxDecoration(color: AppColors.blackColor),
+        child: Center(
+          child: Text(
+            "Blogify @2026",
+            style: TextStyle(color: AppColors.offWhiteColor),
           ),
         ),
       ),
