@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:blog_app/add_blogs/services/backend_services.dart';
 import 'package:blog_app/profile/models/profile_model.dart';
 import 'package:blog_app/services/image_upload.dart';
+import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -95,7 +96,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0E0E10),
+      backgroundColor: AppColors.offWhiteColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF0E0E10),
         elevation: 0,

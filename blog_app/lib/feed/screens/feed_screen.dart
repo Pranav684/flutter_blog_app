@@ -3,6 +3,7 @@ import 'package:blog_app/blog/screens/blog_view.dart';
 import 'package:blog_app/blog/services/blog_service.dart';
 import 'package:blog_app/feed/models/feed_model.dart';
 import 'package:blog_app/feed/services/backend_services.dart' as feed_api;
+import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -53,7 +54,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
       onRefresh: _refreshBlogs,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0E0E10),
+          color: AppColors.offWhiteColor,
         ),
         child: ListView.builder(
           itemCount: blogController == null ? 0 : blogController.blogs.length,

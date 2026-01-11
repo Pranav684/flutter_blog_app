@@ -27,6 +27,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool isLoading=false;
+
   @override
   void dispose() {
     _urlController.dispose();
@@ -297,7 +299,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         children: [
                           GestureDetector(
                             onTap: () async {
+                              setState(() {
+                                isLoading=true;
+                              });
                               await _submitForm();
+                              setState(() {
+                                isLoading=false;
+                              });
                             },
                             child: Container(
                               height: 60,
@@ -311,7 +319,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               child: Center(
-                                child: Text(
+                                child: isLoading?CircularProgressIndicator(
+                                  color: AppColors.whiteColor,
+                                ):Text(
                                   'Submit',
                                   style: AppValue.mediumTextStyle.copyWith(
                                     color: AppColors.whiteColor,

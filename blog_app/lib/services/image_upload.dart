@@ -12,9 +12,9 @@ Future<File?> pickImage() async {
 }
 
 Future<String?> uploadImage(File imageFile) async {
-  try {
     final fileName = DateTime.now().millisecondsSinceEpoch.toString();
     final ref = FirebaseStorage.instance.ref().child("uploads/$fileName.jpg");
+    print(FirebaseStorage.instance.bucket);
 
     // Upload file
     await ref.putFile(imageFile);
@@ -22,6 +22,7 @@ Future<String?> uploadImage(File imageFile) async {
     // Get download URL
     final downloadUrl = await ref.getDownloadURL();
     print(downloadUrl);
+  try {
     return downloadUrl;
   } catch (e) {
     print("Upload failed: $e");
