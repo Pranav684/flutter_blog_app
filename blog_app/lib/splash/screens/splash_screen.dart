@@ -4,7 +4,9 @@ import 'package:blog_app/authentication/option_screen.dart';
 import 'package:blog_app/authentication/signin/screens/signin.dart';
 import 'package:blog_app/feed/models/feed_model.dart';
 import 'package:blog_app/feed/services/backend_services.dart';
+import 'package:blog_app/home/model/user_data_model.dart';
 import 'package:blog_app/home/screens/my_home_page_screen.dart';
+import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/services/local_storage.dart';
 import 'package:blog_app/utility/constants/constant_text.dart';
 import 'package:blog_app/utility/constants/constant_value.dart';
@@ -42,8 +44,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       isUserLoggedIn = true;
     }
 
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      dynamic userData;
       getUserToken();
+      userData = await LocalDb.getUserData();
+      User user = User(
+        userid: userData!["_id"],
+        userName: userData!["fullName"],
+        emailAddress: userData["email"],
+        profileImageUrl: userData["profileImageUrl"],
+        role: userData["role"],
+      );
+      var userController = ref.read(userProvider.notifier);
+      userController.getUserFromDb(user);
       var blogs = await BlogApiClient.getAllBlogsServices();
       if (blogs != null) {
         ref.read(blogsProvider.notifier).getBlogsFromDb(blogs);
