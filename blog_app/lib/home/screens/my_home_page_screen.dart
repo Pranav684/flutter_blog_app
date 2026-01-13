@@ -82,7 +82,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color.fromARGB(255, 205, 205, 205),
+                              color: const Color.fromARGB(255, 218, 218, 218),
                               offset: Offset(0, 3),
                               blurRadius: 5,
                               spreadRadius: 5,

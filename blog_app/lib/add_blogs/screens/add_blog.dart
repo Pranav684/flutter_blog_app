@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:blog_app/add_blogs/services/backend_services.dart';
-import 'package:blog_app/profile/models/profile_model.dart';
+import 'package:blog_app/home/model/user_data_model.dart';
+
 import 'package:blog_app/services/image_upload.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +26,6 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
     super.dispose();
   }
 
-  File? coverImageFile;
-  String? coverImageUrl;
   bool triedSubmittingOnce = false;
   bool isUploading = false;
 
@@ -34,7 +33,6 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
     var resopnse = await BlogApiClient.uploadBlogService(
       _titleController.text,
       _descriptionController.text,
-      coverImageUrl,
       userId,
     );
     if (!mounted) return;
@@ -66,12 +64,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
         );
         return;
       }
-      if (coverImageFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please add an image')),
-        );
-        return;
-      }
+
       if (userData == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User not found')),
@@ -82,9 +75,6 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
         isUploading = true;
       });
       try {
-        if (coverImageFile != null) {
-          coverImageUrl = await uploadImage(coverImageFile!);
-        }
         await uploadBlog(userData.userid);
       } finally {
         if (mounted) {
@@ -230,8 +220,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                   const SizedBox(height: 12),
                   
                   if ((_titleController.text.trim().isEmpty ||
-                          _descriptionController.text.trim().isEmpty ||
-                          coverImageFile == null) &&
+                          _descriptionController.text.trim().isEmpty ) &&
                       triedSubmittingOnce)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
@@ -255,39 +244,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                     ),
                   ),
                 ),
-              GestureDetector(
-                onTap: () async {
-                  var imgFile = await pickImage();
-                  setState(() {
-                    coverImageFile = imgFile;
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.grey[700]!,
-                    ),
-                    color: const Color(0xFF1A1A1D),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: coverImageFile == null
-                        ?  Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(Icons.add_photo_alternate, color: Colors.grey[500]),
-                          )
-                        : ClipOval(
-                            child: Image.file(
-                              coverImageFile!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                  ),
-                ),
-              ),
+              
             ],
           ),
         ),

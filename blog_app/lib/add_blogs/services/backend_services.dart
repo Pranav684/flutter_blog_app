@@ -9,7 +9,6 @@ class BlogApiClient {
   static Future<dynamic> uploadBlogService(
     title,
     description,
-    coverImageURL,
     createdByUserId,
   ) async {
     try {
@@ -18,7 +17,6 @@ class BlogApiClient {
       Map<String, dynamic> payload = {
         "title": title,
         "body": description,
-        "coverImageURL": coverImageURL,
       };
       print(payload);
       var response = await http.post(

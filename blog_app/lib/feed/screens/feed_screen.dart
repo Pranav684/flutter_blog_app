@@ -3,6 +3,7 @@ import 'package:blog_app/blog/screens/blog_view.dart';
 import 'package:blog_app/blog/services/blog_service.dart';
 import 'package:blog_app/feed/models/feed_model.dart';
 import 'package:blog_app/feed/services/backend_services.dart' as feed_api;
+import 'package:blog_app/utility/constants/constant_value.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +74,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     return RefreshIndicator(
       onRefresh: _refreshBlogs,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 50, horizontal: 50),
+        padding: EdgeInsets.only(top: 100, left: 25, right: 25),
         decoration: BoxDecoration(color: AppColors.offWhiteColor),
         child: Column(
           children: [
@@ -103,6 +104,15 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                     ),
                   ),
                 ),
+                GestureDetector(
+                  onTap: () {},
+                  child: SizedBox(
+                    height: 30,
+                    child: Image.asset(
+                      "assets/icons/notification_bell_icon.png",
+                    ),
+                  ),
+                ),
               ],
             ),
             Row(children: []),
@@ -122,129 +132,64 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                       // height: height*0.25,
                       width: double.infinity,
                       margin: EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xFF1A1A1D),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(255, 152, 152, 152),
-                            offset: Offset.zero,
-                            blurRadius: 1,
-                            spreadRadius: 0,
-                            blurStyle: BlurStyle.outer,
-                          ),
-                        ],
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.whiteColor,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Stack(
-                            alignment: AlignmentGeometry.topLeft,
+                          Text(
+                            blogController!.blogs[index].title,
+                            style: AppValue.mediumTextStyle.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadiusGeometry.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10),
+                              Container(
+                                // height: height * 0.04,
+                                // width: height * 0.04,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
                                 ),
-                                child:
-                                    blogController!
-                                            .blogs[index]
-                                            .coverImageUrl ==
-                                        null
-                                    ? SizedBox()
-                                    : Image.network(
-                                        blogController
-                                            .blogs[index]
-                                            .coverImageUrl!,
-                                        width: double.infinity,
-                                      ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    height: height * 0.04,
-                                    width: height * 0.04,
-                                    margin: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(width: 2),
-                                    ),
-                                    child: Center(
-                                      child: CircleAvatar(
-                                        radius: height * 0.02, // circle size
-                                        backgroundImage: NetworkImage(
-                                          blogController
-                                              .blogs[index]
-                                              .createdBy
-                                              .profileImageUrl,
-                                        ),
-                                        backgroundColor: Colors
-                                            .grey[200], // fallback background
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          const Color.fromARGB(
-                                            255,
-                                            154,
-                                            154,
-                                            154,
-                                          ).withValues(
-                                            alpha: 0.2,
-                                          ), // transparent color
-                                      borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(
-                                        color:
-                                            const Color.fromARGB(
-                                              255,
-                                              137,
-                                              137,
-                                              137,
-                                            ).withValues(
-                                              alpha: 0.3,
-                                            ), // subtle border
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    child: Text(
+                                child: Center(
+                                  child: CircleAvatar(
+                                    radius: 12, // circle size
+                                    backgroundImage: NetworkImage(
                                       blogController
                                           .blogs[index]
                                           .createdBy
-                                          .fullName,
-                                      style: TextStyle(
-                                        color: const Color.fromARGB(
-                                          255,
-                                          255,
-                                          255,
-                                          255,
-                                        ),
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                          .profileImageUrl,
                                     ),
+                                    backgroundColor: Colors
+                                        .grey[200], // fallback background
                                   ),
-                                ],
+                                ),
+                              ),
+                              SizedBox(width:8),
+                              Text(
+                                blogController
+                                    .blogs[index]
+                                    .createdBy
+                                    .fullName,
+                                style: AppValue.smallTextStyle,
                               ),
                             ],
                           ),
+                          Divider(color: AppColors.darkGreyColor,),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  blogController.blogs[index].title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Text(
                                   blogController.blogs[index].body,
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: AppColors.blackColor),
                                 ),
                               ],
                             ),
