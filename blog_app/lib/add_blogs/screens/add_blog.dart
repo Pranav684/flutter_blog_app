@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:blog_app/add_blogs/screens/description_area.dart';
 import 'package:blog_app/add_blogs/services/backend_services.dart';
 import 'package:blog_app/home/model/user_data_model.dart';
 
@@ -66,9 +67,9 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
       }
 
       if (userData == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User not found')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('User not found')));
         return;
       }
       setState(() {
@@ -87,164 +88,137 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.offWhiteColor,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0E0E10),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          if (isUploading)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-              ),
-            )
-          else
-            OutlinedButton.icon(
-              onPressed: handleSubmit,
-              icon:  Icon(Icons.send_rounded, size: 18, color: Colors.grey[500]),
-              label:  Text(
-                'Post',
-                style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey[500]),
-              ),
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Colors.white10,
-                side: const BorderSide(color: Colors.white24, width: 1),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                shape: const StadiumBorder(),
-              ),
-            ),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenWidth / paddingSizeHorizontal,
-            vertical: 12,
+          padding: EdgeInsets.only(
+            left: screenWidth / paddingSizeHorizontal,
+            right: screenWidth / paddingSizeHorizontal,
+            top: 100,
           ),
-          child: Stack(
-            alignment: Alignment.topRight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 22,
-                        backgroundColor: const Color(0xFF1A1A1D),
-                        child: Text(
-                          ((userData?.userName.isNotEmpty == true
-                                      ? userData!.userName[0]
-                                      : 'U')
-                                  .toUpperCase()),
-                          style:  TextStyle(color: Colors.grey[500]),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Expanded(
-                      //   child: OutlinedButton.icon(
-                      //     onPressed: () {
-                      //       // Placeholder for selecting a community like Reddit
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         const SnackBar(
-                      //           content: Text('Community picker not implemented'),
-                      //         ),
-                      //       );
-                      //     },
-                      //     icon: const Icon(Icons.group_outlined),
-                      //     label: Align(
-                      //       alignment: Alignment.centerLeft,
-                      //       child: Text(
-                      //         'Choose a community',
-                      //         style: TextStyle(
-                      //           color: Theme.of(context).colorScheme.onSurface,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     style: OutlinedButton.styleFrom(
-                      //       padding: const EdgeInsets.symmetric(
-                      //         horizontal: 12,
-                      //         vertical: 10,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  SizedBox(height: screenHeight*0.05),
-                  SizedBox(
-                    width: screenWidth*0.60,
-                    child: TextField(
-                      controller: _titleController,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Add a descriptive title',
-                        hintStyle: TextStyle(color: Colors.grey[500]),
-                        filled: true,
-                        fillColor: const Color(0xFF1A1A1D),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: AppColors.blackColor,
                     ),
                   ),
-                  Divider(height: 16, color: Colors.grey[800]),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _descriptionController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    style: const TextStyle(color: Colors.white,fontSize: 15),
-                    decoration: InputDecoration(
-                      hintText: 'Share your thoughts...'
-                          ,
-                      hintStyle: TextStyle(color: Colors.grey[500]),
-                      filled: true,
-                      fillColor: const Color(0xFF1A1A1D),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+        
+                  if (isUploading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  
-                  if ((_titleController.text.trim().isEmpty ||
-                          _descriptionController.text.trim().isEmpty ) &&
-                      triedSubmittingOnce)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Please complete all fields and add an image',
-                        style: const TextStyle(color: Colors.red),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: handleSubmit,
+                      child: Icon(
+                        Icons.send_rounded,
+                        color: AppColors.blackColor,
                       ),
                     ),
                 ],
               ),
-              if (isUploading)
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.4),
-                    child: const Center(
-                      child: SizedBox(
-                        width: 48,
-                        height: 48,
-                        child: CircularProgressIndicator(),
-                      ),
+              Row(
+                children: [
+                  const SizedBox(width: 8),
+                  // Expanded(
+                  //   child: OutlinedButton.icon(
+                  //     onPressed: () {
+                  //       // Placeholder for selecting a community like Reddit
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         const SnackBar(
+                  //           content: Text('Community picker not implemented'),
+                  //         ),
+                  //       );
+                  //     },
+                  //     icon: const Icon(Icons.group_outlined),
+                  //     label: Align(
+                  //       alignment: Alignment.centerLeft,
+                  //       child: Text(
+                  //         'Choose a community',
+                  //         style: TextStyle(
+                  //           color: Theme.of(context).colorScheme.onSurface,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     style: OutlinedButton.styleFrom(
+                  //       padding: const EdgeInsets.symmetric(
+                  //         horizontal: 12,
+                  //         vertical: 10,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.05),
+              SizedBox(
+                width: screenWidth * 0.60,
+                child: TextField(
+                  controller: _titleController,
+                  style:  TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.blackColor,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Add a descriptive title',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    filled: true,
+                    fillColor: AppColors.whiteColor,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
                     ),
                   ),
                 ),
-              
+              ),
+              Divider(height: 16, color: Colors.grey[800]),
+              const SizedBox(height: 8),
+              DescriptionArea(),
+              // TextField(
+              //   controller: _descriptionController,
+              //   keyboardType: TextInputType.multiline,
+              //   maxLines: null,
+              //   style: const TextStyle(color: Colors.white,fontSize: 15),
+              //   decoration: InputDecoration(
+              //     hintText: 'Share your thoughts...'
+              //         ,
+              //     hintStyle: TextStyle(color: Colors.grey[500]),
+              //     filled: true,
+              //     fillColor: const Color(0xFF1A1A1D),
+              //     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(8),
+              //       borderSide: BorderSide.none,
+              //     ),
+              //   ),
+              // ),
+              const SizedBox(height: 12),
+        
+              if ((_titleController.text.trim().isEmpty ||
+                      _descriptionController.text.trim().isEmpty) &&
+                  triedSubmittingOnce)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Please complete all fields and add an image',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
             ],
           ),
         ),
