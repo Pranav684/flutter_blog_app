@@ -1,4 +1,9 @@
+import 'package:blog_app/add_blogs/screens/add_blog.dart';
+import 'package:blog_app/authentication/signin/screens/signin.dart';
 import 'package:blog_app/home/model/user_data_model.dart';
+import 'package:blog_app/services/local_db.dart';
+import 'package:blog_app/services/local_storage.dart';
+import 'package:blog_app/utility/constants/constant_value.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,24 +18,134 @@ class MenuScreen extends ConsumerStatefulWidget {
 class _MenuScreenState extends ConsumerState<MenuScreen> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     dynamic userData = ref.read(userProvider);
     return Container(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.only(top: 100.0, left: 50),
       width: double.infinity,
-      decoration: BoxDecoration(color: AppColors.blackColor),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 50, // circle size
-            backgroundImage: NetworkImage(userData!.profileImageUrl),
-            backgroundColor: Colors.grey[800], // fallback background
-          ),
-          Icon(Icons.article_outlined, color: AppColors.whiteColor),
-          Icon(Icons.grading_sharp, color: AppColors.whiteColor),
-          Icon(Icons.subscriptions_outlined, color: AppColors.whiteColor),
-        ],
+      decoration: BoxDecoration(color: AppColors.darkShadeColor),
+      child: SizedBox(
+        width: screenWidth * 0.6,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.greyColor,
+                  ),
+                  child: Center(
+                    child: ClipOval(
+                      child: Image.network(
+                        height: 100,
+                        width: 100,
+                        userData.profileImageUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 8.0),
+              child: Text(
+                userData.userName,
+                style: AppValue.mediumTextStyle.copyWith(
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(
+                color: AppColors.whiteColor,
+                thickness: 1,
+                endIndent: screenWidth * 0.4,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (ctx) => AddBlogScreen()));
+                },
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/icons/add_article.png",
+                      color: AppColors.whiteColor,
+                      height: 30,
+                      width: 30,
+                    ),
+                    SizedBox(width: 16),
+                    Text(
+                      "Add new article",
+                      style: AppValue.smallTextStyle.copyWith(
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/icons/your_article.png",
+                    color: AppColors.whiteColor,
+                    height: 30,
+                    width: 30,
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    "Your articles",
+                    style: AppValue.smallTextStyle.copyWith(
+                      color: AppColors.whiteColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  LocalDb.deleteUser();
+                  LocalStorage.clearStorage();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (ctx) => SignInScreen()),
+                  );
+                },
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/icons/logout.png",
+                      color: AppColors.whiteColor,
+                      height: 30,
+                      width: 30,
+                    ),
+                    SizedBox(width: 16),
+                    Text(
+                      "Logout",
+                      style: AppValue.smallTextStyle.copyWith(
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,9 +1,7 @@
 import 'package:blog_app/add_blogs/screens/add_blog.dart';
 import 'package:blog_app/feed/screens/feed_screen.dart';
-import 'package:blog_app/home/model/user_data_model.dart';
 import 'package:blog_app/home/screens/menu_screen.dart';
 import 'package:blog_app/profile/screens/profile_screen.dart';
-import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

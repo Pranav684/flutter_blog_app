@@ -1,5 +1,5 @@
 import 'package:blog_app/authentication/signin/screens/signin.dart';
-import 'package:blog_app/profile/models/profile_model.dart';
+import 'package:blog_app/home/model/user_data_model.dart';
 import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/services/local_storage.dart';
 import 'package:flutter/material.dart';

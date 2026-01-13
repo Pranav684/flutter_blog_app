@@ -6,6 +6,7 @@ import 'package:blog_app/home/screens/my_home_page_screen.dart';
 import 'package:blog_app/services/image_upload.dart';
 import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/services/local_storage.dart';
+import 'package:blog_app/splash/screens/splash_screen.dart';
 import 'package:blog_app/utility/constants/constant_value.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Please attach an image!')));
+        return;
       }
       var url = await uploadImage(imageFile!);
       _urlController.text = url!;
@@ -81,11 +83,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (!mounted) return;
 
       if (response['success']) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => MyHomePage(title: "Blogify")),
-        );
         LocalStorage.saveToken(response['token']);
         LocalDb.saveUserData(response['user']);
+        
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (ctx) => SplashScreen()),
+        );
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Form Submitted Successfully!')));
