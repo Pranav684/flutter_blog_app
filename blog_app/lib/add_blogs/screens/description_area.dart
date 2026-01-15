@@ -1,6 +1,6 @@
 import 'package:blog_app/utility/theme/colors.dart';
+import 'package:fleather/fleather.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 
 class DescriptionArea extends StatefulWidget {
   const DescriptionArea({super.key});
@@ -10,68 +10,23 @@ class DescriptionArea extends StatefulWidget {
 }
 
 class _DescriptionAreaState extends State<DescriptionArea> {
-  final QuillController _controller = QuillController.basic();
+  late FleatherController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = FleatherController();
+  }
+
+  dynamic postDocument() {
+    final jsonData = _controller.document.toDelta().toJson();
+    return jsonData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        height: 500,
-        color: AppColors.whiteColor,
-        child: Column(
-          children: [
-            QuillSimpleToolbar(
-              controller: _controller,
-              config: QuillSimpleToolbarConfig(
-                showBoldButton: true,
-                showItalicButton: true,
-                showQuote: true,
-                showListBullets: true,
-                showListNumbers: true,
-                showUnderLineButton: false,
-                showStrikeThrough: false,
-                showUndo: false,
-                showRedo: false,
-                showLink: false,
-                showSearchButton: false,
-                showFontFamily: false,
-                showFontSize: false,
-                showColorButton: false,
-                showBackgroundColorButton: false,
-                showInlineCode: false,
-                showLeftAlignment: false,
-                showRightAlignment: false,
-                showHeaderStyle: false,
-                buttonOptions:QuillSimpleToolbarButtonOptions(
-                  base: QuillToolbarBaseButtonOptions(
-                    iconTheme: QuillIconTheme(
-                      iconButtonSelectedData: IconButtonData(
-                        color: AppColors.blackColor,
-                      ),
-                      iconButtonUnselectedData: IconButtonData(
-                        color: AppColors.midGreyColor
-                      )
-                    )
-                  )
-                )
-              ),
-            ),
-            Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: QuillEditor.basic(
-                    controller: _controller,
-                    config: const QuillEditorConfig(
-                      placeholder: "Start writing...",
-                      expands: true,
-                      padding: EdgeInsets.zero,
-                      autoFocus: true,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
+      child: SizedBox()
     );
   }
 }

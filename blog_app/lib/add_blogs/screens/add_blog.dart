@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:blog_app/add_blogs/screens/description_area.dart';
@@ -6,6 +7,7 @@ import 'package:blog_app/home/model/user_data_model.dart';
 
 import 'package:blog_app/services/image_upload.dart';
 import 'package:blog_app/utility/theme/colors.dart';
+import 'package:fleather/fleather.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +21,13 @@ class AddBlogScreen extends ConsumerStatefulWidget {
 class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  late FleatherController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = FleatherController();
+  }
 
   @override
   void dispose() {
@@ -57,6 +66,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
 
     Future<void> handleSubmit() async {
       triedSubmittingOnce = true;
+      _descriptionController.text=jsonEncode(_controller.document.toDelta().toJson());
       setState(() {});
       if (_titleController.text.trim().isEmpty ||
           _descriptionController.text.trim().isEmpty) {
@@ -108,7 +118,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                       color: AppColors.blackColor,
                     ),
                   ),
-        
+
                   if (isUploading)
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12),
@@ -169,12 +179,14 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                 width: screenWidth * 0.60,
                 child: TextField(
                   controller: _titleController,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: AppColors.blackColor,
                   ),
+
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     hintText: 'Add a descriptive title',
                     hintStyle: TextStyle(color: Colors.grey[500]),
                     filled: true,
@@ -188,7 +200,22 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
               ),
               Divider(height: 16, color: Colors.grey[800]),
               const SizedBox(height: 8),
-              DescriptionArea(),
+              Container(
+                height: 500,
+                color: AppColors.whiteColor,
+                child: Column(
+                  children: [
+                    FleatherToolbar.basic(controller: _controller),
+                    Expanded(
+                      child: FleatherEditor(
+                        controller: _controller,
+                        focusNode: FocusNode(),
+                        padding: EdgeInsets.all(8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               // TextField(
               //   controller: _descriptionController,
               //   keyboardType: TextInputType.multiline,
@@ -208,14 +235,14 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
               //   ),
               // ),
               const SizedBox(height: 12),
-        
+
               if ((_titleController.text.trim().isEmpty ||
                       _descriptionController.text.trim().isEmpty) &&
                   triedSubmittingOnce)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Please complete all fields and add an image',
+                    'Please complete all fields',
                     style: const TextStyle(color: Colors.red),
                   ),
                 ),

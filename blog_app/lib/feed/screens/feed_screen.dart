@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:blog_app/blog/model/blog_model.dart';
 import 'package:blog_app/blog/screens/blog_view.dart';
 import 'package:blog_app/blog/services/blog_service.dart';
@@ -5,6 +7,7 @@ import 'package:blog_app/feed/models/feed_model.dart';
 import 'package:blog_app/feed/services/backend_services.dart' as feed_api;
 import 'package:blog_app/utility/constants/constant_value.dart';
 import 'package:blog_app/utility/theme/colors.dart';
+import 'package:fleather/fleather.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +22,7 @@ class FeedScreen extends ConsumerStatefulWidget {
 class _FeedScreenState extends ConsumerState<FeedScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller = AnimationController(vsync: this);
+  late FleatherController _contentController;
   bool isflipped = false;
 
   @override
@@ -64,6 +68,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Something went wrong!')));
+    }
+  }
+
+  List<dynamic>? parseRichText(dynamic body) {
+    try {
+      print(body);
+      final decoded = jsonDecode(body);
+      print('case:3');
+      return decoded is List ? decoded : null;
+    } catch (_) {
+      print('case:4');
+      return null;
     }
   }
 
@@ -124,6 +140,17 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                     ? 0
                     : blogController.blogs.length,
                 itemBuilder: (context, index) {
+                  final parsedContent = parseRichText(
+                    blogController!.blogs[index].body,
+                  );
+
+                  final FleatherController? contentController =
+                      parsedContent != null
+                      ? FleatherController(
+                          document: ParchmentDocument.fromJson(parsedContent),
+                        )
+                      : null;
+
                   return GestureDetector(
                     onTap: () async {
                       _getBlogData(blogController.blogs[index].id);
@@ -141,7 +168,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            blogController!.blogs[index].title,
+                            blogController.blogs[index].title,
                             style: AppValue.mediumTextStyle.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
@@ -166,31 +193,35 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                                           .createdBy
                                           .profileImageUrl,
                                     ),
-                                    backgroundColor: Colors
-                                        .grey[200], // fallback background
+                                    backgroundColor:
+                                        Colors.grey[200], // fallback background
                                   ),
                                 ),
                               ),
-                              SizedBox(width:8),
+                              SizedBox(width: 8),
                               Text(
-                                blogController
-                                    .blogs[index]
-                                    .createdBy
-                                    .fullName,
+                                blogController.blogs[index].createdBy.fullName,
                                 style: AppValue.smallTextStyle,
                               ),
                             ],
                           ),
-                          Divider(color: AppColors.darkGreyColor,),
+                          Divider(color: AppColors.darkGreyColor),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  blogController.blogs[index].body,
-                                  style: TextStyle(color: AppColors.blackColor),
-                                ),
+                                contentController != null
+                                    ? FleatherEditor(
+                                        controller: contentController,
+                                        readOnly: true,
+                                      )
+                                    : Text(
+                                        blogController.blogs[index].body,
+                                        style: TextStyle(
+                                          color: AppColors.blackColor,
+                                        ),
+                                      ),
                               ],
                             ),
                           ),
