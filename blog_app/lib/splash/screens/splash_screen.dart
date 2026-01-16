@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:blog_app/add_blogs/screens/success_screen.dart';
 import 'package:blog_app/authentication/option_screen.dart';
 import 'package:blog_app/authentication/signin/screens/signin.dart';
 import 'package:blog_app/feed/models/feed_model.dart';
@@ -44,7 +45,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       isUserLoggedIn = true;
     }
 
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       dynamic userData;
       getUserToken();
@@ -69,9 +69,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (ctx) => isUserLoggedIn
-              ? MyHomePage(title: AppText.appName)
-              : OptionScreen(),
+          builder: (ctx) => SuccessScreen()
+          // isUserLoggedIn
+          //     ? MyHomePage(title: AppText.appName)
+          //     : OptionScreen(),
         ),
       ),
     );

@@ -73,12 +73,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
 
   List<dynamic>? parseRichText(dynamic body) {
     try {
-      print(body);
       final decoded = jsonDecode(body);
-      print('case:3');
       return decoded is List ? decoded : null;
     } catch (_) {
-      print('case:4');
       return null;
     }
   }

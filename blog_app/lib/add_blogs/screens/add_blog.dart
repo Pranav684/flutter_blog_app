@@ -1,11 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:blog_app/add_blogs/screens/description_area.dart';
+import 'package:blog_app/add_blogs/screens/success_screen.dart';
 import 'package:blog_app/add_blogs/services/backend_services.dart';
 import 'package:blog_app/home/model/user_data_model.dart';
-
-import 'package:blog_app/services/image_upload.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:fleather/fleather.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +43,9 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
     );
     if (!mounted) return;
     if (resopnse["success"]) {
-      ScaffoldMessenger.of(
+      Navigator.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Form Submitted Successfully!')));
+      ).pushReplacement(MaterialPageRoute(builder: (ctx) => SuccessScreen()));
     } else {
       ScaffoldMessenger.of(
         context,
@@ -66,7 +62,9 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
 
     Future<void> handleSubmit() async {
       triedSubmittingOnce = true;
-      _descriptionController.text=jsonEncode(_controller.document.toDelta().toJson());
+      _descriptionController.text = jsonEncode(
+        _controller.document.toDelta().toJson(),
+      );
       setState(() {});
       if (_titleController.text.trim().isEmpty ||
           _descriptionController.text.trim().isEmpty) {
@@ -141,44 +139,12 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                     ),
                 ],
               ),
-              Row(
-                children: [
-                  const SizedBox(width: 8),
-                  // Expanded(
-                  //   child: OutlinedButton.icon(
-                  //     onPressed: () {
-                  //       // Placeholder for selecting a community like Reddit
-                  //       ScaffoldMessenger.of(context).showSnackBar(
-                  //         const SnackBar(
-                  //           content: Text('Community picker not implemented'),
-                  //         ),
-                  //       );
-                  //     },
-                  //     icon: const Icon(Icons.group_outlined),
-                  //     label: Align(
-                  //       alignment: Alignment.centerLeft,
-                  //       child: Text(
-                  //         'Choose a community',
-                  //         style: TextStyle(
-                  //           color: Theme.of(context).colorScheme.onSurface,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     style: OutlinedButton.styleFrom(
-                  //       padding: const EdgeInsets.symmetric(
-                  //         horizontal: 12,
-                  //         vertical: 10,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
               SizedBox(height: screenHeight * 0.05),
               SizedBox(
-                width: screenWidth * 0.60,
                 child: TextField(
+                  //Title field
                   controller: _titleController,
+                  textInputAction: TextInputAction.next,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -198,10 +164,10 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                   ),
                 ),
               ),
-              Divider(height: 16, color: Colors.grey[800]),
-              const SizedBox(height: 8),
+              Divider(height: 1, color: Colors.grey[800]),
               Container(
-                height: 500,
+                //Body field
+                height: screenHeight * 0.65,
                 color: AppColors.whiteColor,
                 child: Column(
                   children: [
@@ -216,26 +182,7 @@ class _AddBlogScreenState extends ConsumerState<AddBlogScreen> {
                   ],
                 ),
               ),
-              // TextField(
-              //   controller: _descriptionController,
-              //   keyboardType: TextInputType.multiline,
-              //   maxLines: null,
-              //   style: const TextStyle(color: Colors.white,fontSize: 15),
-              //   decoration: InputDecoration(
-              //     hintText: 'Share your thoughts...'
-              //         ,
-              //     hintStyle: TextStyle(color: Colors.grey[500]),
-              //     filled: true,
-              //     fillColor: const Color(0xFF1A1A1D),
-              //     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(8),
-              //       borderSide: BorderSide.none,
-              //     ),
-              //   ),
-              // ),
               const SizedBox(height: 12),
-
               if ((_titleController.text.trim().isEmpty ||
                       _descriptionController.text.trim().isEmpty) &&
                   triedSubmittingOnce)
