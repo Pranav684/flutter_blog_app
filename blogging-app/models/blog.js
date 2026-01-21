@@ -1,4 +1,12 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, default: mongoose } = require("mongoose");
+
+const likeToPost = new Schema({
+  likedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+});
 
 const blogSchema = new Schema(
   {
@@ -14,9 +22,13 @@ const blogSchema = new Schema(
       type: String,
       required: false,
     },
+    likes: {
+      type: [likeToPost],
+      required: true,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "user"
+      ref: "user",
     },
   },
   {
