@@ -69,10 +69,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (ctx) => SuccessScreen()
-          // isUserLoggedIn
-          //     ? MyHomePage(title: AppText.appName)
-          //     : OptionScreen(),
+          builder: (ctx) => 
+          isUserLoggedIn
+              ? MyHomePage(title: AppText.appName)
+              : OptionScreen(),
         ),
       ),
     );

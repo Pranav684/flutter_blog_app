@@ -188,7 +188,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
       //       label: "Add Blog",
       //       icon: Icon(Icons.add_to_photos),
       //     ),
-      //     BottomNavigationBarItem(label: "User", icon: Icon(Icons.person)),
+      //     BottomNavigationBarItem(label: "User", icon: Icon(Icons.person, color: AppColors.darkGreyColor,)),
       //   ],
       // ),
     );

@@ -45,6 +45,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                         width: 100,
                         userData.profileImageUrl,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                            return  Icon(Icons.person, color: AppColors.darkGreyColor,);
+                          },
                       ),
                     ),
                   ),

@@ -2,6 +2,7 @@ import 'package:blog_app/authentication/signin/screens/signin.dart';
 import 'package:blog_app/home/model/user_data_model.dart';
 import 'package:blog_app/services/local_db.dart';
 import 'package:blog_app/services/local_storage.dart';
+import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -54,7 +55,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         backgroundImage: NetworkImage(
                           userData!.profileImageUrl,
                         ),
-                        backgroundColor: Colors.grey[800], // fallback background
+                        onBackgroundImageError: (exception, stackTrace) {
+                          print(exception.toString());
+                        },
+                        backgroundColor: Colors.grey[800],
+                        child: Icon(Icons.person, color: AppColors.darkGreyColor, ), // fallback background
                       ),
                     ),
                   ),

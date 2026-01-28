@@ -6,6 +6,7 @@ import 'package:blog_app/blog/services/blog_service.dart';
 import 'package:blog_app/feed/models/feed_model.dart';
 import 'package:blog_app/feed/services/backend_services.dart' as feed_api;
 import 'package:blog_app/utility/constants/constant_value.dart';
+import 'package:blog_app/utility/functions/parse_json.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:fleather/fleather.dart';
 import 'package:flutter/material.dart';
@@ -71,14 +72,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     }
   }
 
-  List<dynamic>? parseRichText(dynamic body) {
-    try {
-      final decoded = jsonDecode(body);
-      return decoded is List ? decoded : null;
-    } catch (_) {
-      return null;
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +131,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                     ? 0
                     : blogController.blogs.length,
                 itemBuilder: (context, index) {
-                  final parsedContent = parseRichText(
-                    blogController!.blogs[index].body,
-                  );
+                  String body = blogController!.blogs[index].body;
+                  final parsedContent = parseRichText(body);
 
                   final FleatherController? contentController =
                       parsedContent != null
@@ -148,82 +141,110 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                         )
                       : null;
 
-                  return GestureDetector(
-                    onTap: () async {
-                      _getBlogData(blogController.blogs[index].id);
-                    },
-                    child: Container(
-                      // height: height*0.25,
-                      width: double.infinity,
-                      margin: EdgeInsets.all(8),
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: AppColors.whiteColor,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            blogController.blogs[index].title,
-                            style: AppValue.mediumTextStyle.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
+                  return Container(
+                    // height: height*0.25,
+                    width: double.infinity,
+                    margin: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.whiteColor,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          blogController.blogs[index].title,
+                          style: AppValue.mediumTextStyle.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                           ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                // height: height * 0.04,
-                                // width: height * 0.04,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: CircleAvatar(
-                                    radius: 12, // circle size
-                                    backgroundImage: NetworkImage(
-                                      blogController
-                                          .blogs[index]
-                                          .createdBy
-                                          .profileImageUrl,
-                                    ),
-                                    backgroundColor:
-                                        Colors.grey[200], // fallback background
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              // height: height * 0.04,
+                              // width: height * 0.04,
+                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              child: Center(
+                                child: CircleAvatar(
+                                  radius: 12, // circle size
+                                  backgroundImage: NetworkImage(
+                                    blogController
+                                        .blogs[index]
+                                        .createdBy
+                                        .profileImageUrl,
+                                  ),
+                                  onBackgroundImageError:
+                                      (exception, stackTrace) {
+                                        print(exception.toString());
+                                      },
+                                  backgroundColor:
+                                      Colors.grey[200], // fallback background
+                                  child: Icon(
+                                    Icons.person,
+                                    color: AppColors.darkGreyColor,
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
-                              Text(
-                                blogController.blogs[index].createdBy.fullName,
-                                style: AppValue.smallTextStyle,
-                              ),
-                            ],
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              blogController.blogs[index].createdBy.fullName,
+                              style: AppValue.smallTextStyle,
+                            ),
+                          ],
+                        ),
+                        Divider(color: AppColors.darkGreyColor),
+                        Container(
+                          constraints: BoxConstraints(
+                            maxHeight: 200,
                           ),
-                          Divider(color: AppColors.darkGreyColor),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                contentController != null
-                                    ? FleatherEditor(
-                                        controller: contentController,
-                                        readOnly: true,
-                                      )
-                                    : Text(
-                                        blogController.blogs[index].body,
-                                        style: TextStyle(
-                                          color: AppColors.blackColor,
-                                        ),
-                                      ),
-                              ],
+                          // height: 200,
+                          padding: const EdgeInsets.all(8.0),
+                          child: SingleChildScrollView(
+                            physics: NeverScrollableScrollPhysics(),
+                            child: contentController != null
+                                ? FleatherEditor(
+                                    controller: contentController,
+                                    readOnly: true,
+                                  )
+                                : Text(
+                                    body,
+                                    style: TextStyle(
+                                      color: AppColors.blackColor,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () =>
+                              _getBlogData(blogController.blogs[index].id),
+                          child: Container(
+                            height: 45,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.blackColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.blackColor,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Read More',
+                                style: AppValue.mediumTextStyle.copyWith(
+                                  color: AppColors.whiteColor,
+                                  fontSize: AppValue.smallTextSize
+                                ),
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
