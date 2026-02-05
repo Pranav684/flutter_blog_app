@@ -14,6 +14,50 @@ class BlogView extends ConsumerStatefulWidget {
 }
 
 class _BlogViewState extends ConsumerState<BlogView> {
+
+  bool _isSaved=false;
+
+  double _scale = 1.0;
+  bool _isAnimating = false;
+
+
+  void _onCommentTap()async{
+    setState(() {
+      _isAnimating = true;
+    });
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      _scale = 1.6;
+    });
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    setState(() {
+      _scale = 1.0;
+    });
+
+    if(mounted){
+      var blogDataController = ref.read(blogDataProvider);
+          List<Comment> reversedComments = blogDataController!.comments.reversed
+              .toList();
+          await showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) =>
+                CommentBottomSheet(comments: reversedComments),
+          );
+          setState(() {});
+    }
+
+    setState(() {
+      _isAnimating = false;
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var blogDataController = ref.watch(blogDataProvider);
@@ -32,9 +76,18 @@ class _BlogViewState extends ConsumerState<BlogView> {
         elevation: 0,
         iconTheme: IconThemeData(color: AppColors.blackColor),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.save_alt, color: AppColors.blackColor),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isSaved=!_isSaved;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: !_isSaved?
+              Image.asset("assets/icons/save_outlined.png",):
+              Image.asset("assets/icons/saved_red.png",),
+            ),
           ),
         ],
       ),
@@ -155,16 +208,7 @@ class _BlogViewState extends ConsumerState<BlogView> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () async {
-          List<Comment> reversedComments = blogDataController.comments.reversed
-              .toList();
-          await showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) =>
-                CommentBottomSheet(comments: reversedComments),
-          );
-          setState(() {});
+          _onCommentTap();
         },
         child: Container(
           margin: const EdgeInsets.all(8),
@@ -173,7 +217,9 @@ class _BlogViewState extends ConsumerState<BlogView> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.comment, color: AppColors.blackColor, size: 35),
+              _isAnimating?
+              Image.asset("assets/gifs/comments.gif",height: 24,):
+              Image.asset("assets/icons/comments_static.png",height: 24,),
               const SizedBox(width: 8),
               Text(
                 "${blogDataController.comments.length}",
@@ -268,7 +314,7 @@ class CommentBottomSheet extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(
-                          "assets/icons/comment_icon.png",
+                          "assets/icons/comments_static.png",
                           color: Colors.white,
                           height: 20,
                         ),
