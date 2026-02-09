@@ -1,12 +1,12 @@
 const { Schema, model, default: mongoose } = require("mongoose");
 
-const likeToPost = new Schema({
-  likedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
-    required: true,
-  },
-});
+// const likeToPost = new Schema({
+//   likedBy: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "user",
+//     required: true,
+//   },
+// });
 
 const blogSchema = new Schema(
   {
@@ -23,8 +23,9 @@ const blogSchema = new Schema(
       required: false,
     },
     likes: {
-      type: [likeToPost],
-      required: true,
+      type: Number,
+      default:0,
+      min:0,
     },
     createdBy: {
       type: Schema.Types.ObjectId,
