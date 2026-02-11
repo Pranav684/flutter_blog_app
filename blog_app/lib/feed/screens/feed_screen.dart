@@ -72,8 +72,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -153,12 +151,24 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          blogController.blogs[index].title,
-                          style: AppValue.mediumTextStyle.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              blogController.blogs[index].title,
+                              style: AppValue.mediumTextStyle.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Icon(
+                              Icons.favorite,
+                              color: blogController.blogs[index].likedByMe
+                                  ? AppColors.redColor
+                                  : AppColors.greyColor,
+                              size: 24,
+                            ),
+                          ],
                         ),
                         SizedBox(height: 8),
                         Row(
@@ -169,25 +179,35 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                               // width: height * 0.04,
                               decoration: BoxDecoration(shape: BoxShape.circle),
                               child: Center(
-                                child: CircleAvatar(
-                                  radius: 12, // circle size
-                                  backgroundImage: NetworkImage(
+                                child:
                                     blogController
-                                        .blogs[index]
-                                        .createdBy
-                                        .profileImageUrl,
-                                  ),
-                                  onBackgroundImageError:
-                                      (exception, stackTrace) {
-                                        print(exception.toString());
-                                      },
-                                  backgroundColor:
-                                      Colors.grey[200], // fallback background
-                                  child: Icon(
-                                    Icons.person,
-                                    color: AppColors.darkGreyColor,
-                                  ),
-                                ),
+                                            .blogs[index]
+                                            .createdBy
+                                            .profileImageUrl ==
+                                        null
+                                    ? Icon(
+                                        Icons.person,
+                                        color: AppColors.darkGreyColor,
+                                      )
+                                    : CircleAvatar(
+                                        radius: 12, // circle size
+                                        backgroundImage: NetworkImage(
+                                          blogController
+                                              .blogs[index]
+                                              .createdBy
+                                              .profileImageUrl!,
+                                        ),
+                                        onBackgroundImageError:
+                                            (exception, stackTrace) {
+                                              print(exception.toString());
+                                            },
+                                        backgroundColor: Colors
+                                            .grey[200], // fallback background
+                                        child: Icon(
+                                          Icons.person,
+                                          color: AppColors.darkGreyColor,
+                                        ),
+                                      ),
                               ),
                             ),
                             SizedBox(width: 8),
@@ -199,9 +219,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                         ),
                         Divider(color: AppColors.darkGreyColor),
                         Container(
-                          constraints: BoxConstraints(
-                            maxHeight: 200,
-                          ),
+                          constraints: BoxConstraints(maxHeight: 200),
                           // height: 200,
                           padding: const EdgeInsets.all(8.0),
                           child: SingleChildScrollView(
@@ -238,7 +256,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                                 'Read More',
                                 style: AppValue.mediumTextStyle.copyWith(
                                   color: AppColors.whiteColor,
-                                  fontSize: AppValue.smallTextSize
+                                  fontSize: AppValue.smallTextSize,
                                 ),
                               ),
                             ),

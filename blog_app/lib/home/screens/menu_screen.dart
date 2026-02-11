@@ -40,15 +40,20 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                   ),
                   child: Center(
                     child: ClipOval(
-                      child: Image.network(
-                        height: 100,
-                        width: 100,
-                        userData.profileImageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                            return  Icon(Icons.person, color: AppColors.darkGreyColor,);
-                          },
-                      ),
+                      child: userData.profileImageUrl == null
+                          ? Icon(Icons.person, color: AppColors.darkGreyColor)
+                          : Image.network(
+                              height: 100,
+                              width: 100,
+                              userData.profileImageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.person,
+                                  color: AppColors.darkGreyColor,
+                                );
+                              },
+                            ),
                     ),
                   ),
                 ),

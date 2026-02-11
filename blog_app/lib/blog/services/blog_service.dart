@@ -11,6 +11,7 @@ class BlogDataApiClient {
     try {
       var token = await LocalStorage.getToken();
       print(token);
+      print(blogId);
       var response = await http.get(
         Uri.parse("$baseUrl/blog/$blogId"),
         headers: {
@@ -25,6 +26,7 @@ class BlogDataApiClient {
         return blogData;
       }
     } catch (e) {
+      print(e);
       return HttpException("Blog Not Uploaded!");
     }
   }
@@ -51,5 +53,22 @@ class BlogDataApiClient {
       return false;
     }
     return false;
+  }
+
+  static Future<bool> postLikeAction(blogId)async{
+    try{
+      var token=await LocalStorage.getToken();
+      var response=await http.post(
+        Uri.parse("$baseUrl/blog/like/$blogId"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // 👈 Add token here
+        },
+      );
+      var decodedResponse=jsonDecode(response.body);
+      return decodedResponse["success"];
+    }catch(e){
+      return false;
+    }
   }
 }

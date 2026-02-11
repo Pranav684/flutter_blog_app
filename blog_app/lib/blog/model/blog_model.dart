@@ -19,6 +19,15 @@ final blogDataProvider = StateNotifierProvider<BlogDataNotifier, BlogData?>((ref
 });
 
 
+// To parse this JSON data, do
+//
+//     final blogData = blogDataFromJson(jsonString);
+
+
+// To parse this JSON data, do
+//
+//     final blogData = blogDataFromJson(jsonString);
+
 
 BlogData blogDataFromJson(String str) => BlogData.fromJson(json.decode(str));
 
@@ -52,75 +61,47 @@ class Blog {
     String id;
     String title;
     String body;
-    String? coverImageUrl;
+    int likesCount;
     CreatedBy createdBy;
     DateTime createdAt;
     DateTime updatedAt;
     int v;
+    bool likedByMe;
 
     Blog({
         required this.id,
         required this.title,
         required this.body,
-        required this.coverImageUrl,
+        required this.likesCount,
         required this.createdBy,
         required this.createdAt,
         required this.updatedAt,
         required this.v,
+        required this.likedByMe,
     });
 
     factory Blog.fromJson(Map<String, dynamic> json) => Blog(
         id: json["_id"],
         title: json["title"],
         body: json["body"],
-        coverImageUrl: json["coverImageURL"],
+        likesCount: json["likesCount"],
         createdBy: CreatedBy.fromJson(json["createdBy"]),
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
+        likedByMe: json["likedByMe"],
     );
 
     Map<String, dynamic> toJson() => {
         "_id": id,
         "title": title,
         "body": body,
-        "coverImageURL": coverImageUrl,
+        "likesCount": likesCount,
         "createdBy": createdBy.toJson(),
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "__v": v,
-    };
-}
-
-class CreatedBy {
-    String id;
-    String fullName;
-    String email;
-    String profileImageUrl;
-    String role;
-
-    CreatedBy({
-        required this.id,
-        required this.fullName,
-        required this.email,
-        required this.profileImageUrl,
-        required this.role,
-    });
-
-    factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
-        id: json["_id"],
-        fullName: json["fullName"],
-        email: json["email"],
-        profileImageUrl: json["profileImageUrl"],
-        role: json["role"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "_id": id,
-        "fullName": fullName,
-        "email": email,
-        "profileImageUrl": profileImageUrl,
-        "role": role,
+        "likedByMe": likedByMe,
     };
 }
 
@@ -161,5 +142,39 @@ class Comment {
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "__v": v,
+    };
+}
+
+
+
+class CreatedBy {
+    String id;
+    String fullName;
+    String email;
+    String? profileImageUrl;
+    String role;
+
+    CreatedBy({
+        required this.id,
+        required this.fullName,
+        required this.email,
+        required this.profileImageUrl,
+        required this.role,
+    });
+
+    factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
+        id: json["_id"],
+        fullName: json["fullName"],
+        email: json["email"],
+        profileImageUrl: json["profileImageUrl"],
+        role: json["role"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "_id": id,
+        "fullName": fullName,
+        "email": email,
+        "profileImageUrl": profileImageUrl,
+        "role": role,
     };
 }

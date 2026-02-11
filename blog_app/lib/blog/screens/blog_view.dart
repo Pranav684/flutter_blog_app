@@ -13,15 +13,52 @@ class BlogView extends ConsumerStatefulWidget {
   ConsumerState<BlogView> createState() => _BlogViewState();
 }
 
-class _BlogViewState extends ConsumerState<BlogView> {
+class _BlogViewState extends ConsumerState<BlogView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
 
-  bool _isSaved=false;
+  bool _isLiked = false;
+  bool _isSaved = false;
 
   double _scale = 1.0;
   bool _isAnimating = false;
 
+  @override
+  void initState() {
+    super.initState();
+    var blogDataController = ref.read(blogDataProvider);
+    _isLiked = blogDataController!.blog.likedByMe;
+    
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 250),
+    );
 
-  void _onCommentTap()async{
+    _scaleAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.4,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+  }
+
+  void _onLikeTap(String blogId) async {
+    setState(() {
+      _isLiked = !_isLiked;
+    });
+    var result = await BlogDataApiClient.postLikeAction(blogId);
+    print(result);
+    _controller.forward().then((_) {
+      _controller.reverse();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onCommentTap() async {
     setState(() {
       _isAnimating = true;
     });
@@ -37,26 +74,23 @@ class _BlogViewState extends ConsumerState<BlogView> {
       _scale = 1.0;
     });
 
-    if(mounted){
+    if (mounted) {
       var blogDataController = ref.read(blogDataProvider);
-          List<Comment> reversedComments = blogDataController!.comments.reversed
-              .toList();
-          await showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) =>
-                CommentBottomSheet(comments: reversedComments),
-          );
-          setState(() {});
+      List<Comment> reversedComments = blogDataController!.comments.reversed
+          .toList();
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => CommentBottomSheet(comments: reversedComments),
+      );
+      setState(() {});
     }
 
     setState(() {
       _isAnimating = false;
     });
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +113,14 @@ class _BlogViewState extends ConsumerState<BlogView> {
           GestureDetector(
             onTap: () {
               setState(() {
-                _isSaved=!_isSaved;
+                _isSaved = !_isSaved;
               });
             },
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: !_isSaved?
-              Image.asset("assets/icons/save_outlined.png",):
-              Image.asset("assets/icons/saved_red.png",),
+              child: !_isSaved
+                  ? Image.asset("assets/icons/save_outlined.png")
+                  : Image.asset("assets/icons/saved_red.png"),
             ),
           ),
         ],
@@ -133,23 +167,34 @@ class _BlogViewState extends ConsumerState<BlogView> {
                             ),
                           ),
                           child: Center(
-                            child: CircleAvatar(
-                              radius: height * 0.022,
-                              backgroundImage: NetworkImage(
+                            child:
                                 blogDataController
-                                    .blog
-                                    .createdBy
-                                    .profileImageUrl,
-                              ),
-                              backgroundColor: Colors.grey[800],
-                              onBackgroundImageError: (exception, stackTrace) {
-                                print(exception.toString());
-                              },
-                              child: Icon(
-                                Icons.person,
-                                color: AppColors.darkGreyColor,
-                              ),
-                            ),
+                                        .blog
+                                        .createdBy
+                                        .profileImageUrl ==
+                                    null
+                                ? Icon(
+                                    Icons.person,
+                                    color: AppColors.darkGreyColor,
+                                  )
+                                : CircleAvatar(
+                                    radius: height * 0.022,
+                                    backgroundImage: NetworkImage(
+                                      blogDataController
+                                          .blog
+                                          .createdBy
+                                          .profileImageUrl!,
+                                    ),
+                                    backgroundColor: Colors.grey[800],
+                                    onBackgroundImageError:
+                                        (exception, stackTrace) {
+                                          print(exception.toString());
+                                        },
+                                    child: Icon(
+                                      Icons.person,
+                                      color: AppColors.darkGreyColor,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -206,31 +251,58 @@ class _BlogViewState extends ConsumerState<BlogView> {
           ],
         ),
       ),
-      floatingActionButton: GestureDetector(
-        onTap: () async {
-          _onCommentTap();
-        },
-        child: Container(
-          margin: const EdgeInsets.all(8),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _isAnimating?
-              Image.asset("assets/gifs/comments.gif",height: 24,):
-              Image.asset("assets/icons/comments_static.png",height: 24,),
-              const SizedBox(width: 8),
-              Text(
-                "${blogDataController.comments.length}",
-                style:  TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.blackColor,
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
+            child: GestureDetector(
+              onTap: () async {
+                _onLikeTap(blogDataController.blog.id);
+              },
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Icon(
+                  Icons.favorite,
+                  color: _isLiked ? AppColors.redColor : AppColors.greyColor,
+                  size: 30,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+
+          GestureDetector(
+            onTap: () async {
+              _onCommentTap();
+            },
+            child: Container(
+              margin: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _isAnimating
+                      ? Image.asset("assets/gifs/comments.gif", height: 24)
+                      : Image.asset(
+                          "assets/icons/comments_static.png",
+                          height: 24,
+                        ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "${blogDataController.comments.length}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.blackColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -278,18 +350,20 @@ class CommentBottomSheet extends ConsumerWidget {
                     controller: scrollController,
                     itemCount: comments.length,
                     itemBuilder: (context, index) => ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          comments[index].createdBy.profileImageUrl,
-                        ),
-                        onBackgroundImageError: (exception, stackTrace) {
-                          print(exception.toString());
-                        },
-                        child: Icon(
-                          Icons.person,
-                          color: AppColors.darkGreyColor,
-                        ),
-                      ),
+                      leading: comments[index].createdBy.profileImageUrl == null
+                          ? Icon(Icons.person, color: AppColors.darkGreyColor)
+                          : CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                comments[index].createdBy.profileImageUrl!,
+                              ),
+                              onBackgroundImageError: (exception, stackTrace) {
+                                print(exception.toString());
+                              },
+                              child: Icon(
+                                Icons.person,
+                                color: AppColors.darkGreyColor,
+                              ),
+                            ),
                       title: Text(
                         comments[index].createdBy.fullName,
                         style: const TextStyle(color: Colors.white),

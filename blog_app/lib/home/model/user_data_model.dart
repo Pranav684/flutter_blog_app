@@ -17,7 +17,7 @@ class User {
   String userid;
   String userName;
   String emailAddress;
-  String profileImageUrl;
+  String? profileImageUrl;
   String role;
 
   User({

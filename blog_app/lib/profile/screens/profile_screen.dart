@@ -53,7 +53,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: CircleAvatar(
                         radius: height * 0.04, // circle size
                         backgroundImage: NetworkImage(
-                          userData!.profileImageUrl,
+                          userData!.profileImageUrl!,
                         ),
                         onBackgroundImageError: (exception, stackTrace) {
                           print(exception.toString());

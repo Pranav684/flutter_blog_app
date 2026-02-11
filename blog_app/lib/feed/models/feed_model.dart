@@ -22,13 +22,17 @@ final blogsProvider = StateNotifierProvider<BlogsNotifier, Blogs?>((ref) {
 //
 //     final Blogs = BlogsFromJson(jsonString);
 
+// To parse this JSON data, do
+//
+//     final blog = blogFromJson(jsonString);
+
 Blogs blogsFromJson(String str) => Blogs.fromJson(json.decode(str));
 
 String blogsToJson(Blogs data) => json.encode(data.toJson());
 
 class Blogs {
     bool success;
-    List<Blog> blogs;
+    List<BlogElement> blogs;
 
     Blogs({
         required this.success,
@@ -37,7 +41,7 @@ class Blogs {
 
     factory Blogs.fromJson(Map<String, dynamic> json) => Blogs(
         success: json["success"],
-        blogs: List<Blog>.from(json["blogs"].map((x) => Blog.fromJson(x))),
+        blogs: List<BlogElement>.from(json["blogs"].map((x) => BlogElement.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -46,55 +50,60 @@ class Blogs {
     };
 }
 
-class Blog {
+class BlogElement {
     String id;
     String title;
     String body;
-    String? coverImageUrl;
+    int likesCount;
     CreatedBy createdBy;
     DateTime createdAt;
     DateTime updatedAt;
     int v;
+    bool likedByMe;
 
-    Blog({
+    BlogElement({
         required this.id,
         required this.title,
         required this.body,
-        required this.coverImageUrl,
+        required this.likesCount,
         required this.createdBy,
         required this.createdAt,
         required this.updatedAt,
         required this.v,
+        required this.likedByMe,
     });
 
-    factory Blog.fromJson(Map<String, dynamic> json) => Blog(
+    factory BlogElement.fromJson(Map<String, dynamic> json) => BlogElement(
         id: json["_id"],
         title: json["title"],
         body: json["body"],
-        coverImageUrl: json["coverImageURL"],
+        likesCount: json["likesCount"],
         createdBy: CreatedBy.fromJson(json["createdBy"]),
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
+        likedByMe: json["likedByMe"],
     );
 
     Map<String, dynamic> toJson() => {
         "_id": id,
         "title": title,
         "body": body,
-        "coverImageURL": coverImageUrl,
+        "likesCount": likesCount,
         "createdBy": createdBy.toJson(),
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "__v": v,
+        "likedByMe": likedByMe,
     };
 }
+
 
 class CreatedBy {
     String id;
     String fullName;
     String email;
-    String profileImageUrl;
+    String? profileImageUrl;
     String role;
 
     CreatedBy({
