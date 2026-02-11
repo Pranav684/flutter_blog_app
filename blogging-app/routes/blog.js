@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const Blog = require("../models/blog");
 const Comment = require("../models/comments");
+const Like = require("../models/likes");
+const likeController = require("../controllers/likesController");
 const router = Router();
 
 router.post("/upload", async (req, res) => {
@@ -29,14 +31,37 @@ router.post("/upload", async (req, res) => {
 router.get("/get_all_blogs", async (req, res) => {
   try {
     const allBlogs = await Blog.find({})
-      .populate("createdBy")
-      .sort("-createdAt");
-    console.log(allBlogs);
+      .populate("createdBy", "fullName email profileImageUrl role")
+      .sort("-createdAt")
+      .lean();
+
+    console.log("......object - 1......");
+
+    const userLikes = await Like.find({
+      userId: req.user._id,
+      blogId: { $in: allBlogs.map((blog) => blog._id) },
+    }).select("blogId");
+
+    console.log("......object - 2......");
+
+    // converting them into set of strings for easy comparision
+    const likedBlogSet = new Set(
+      userLikes.map((like) => like.blogId.toString())
+    );
+    console.log("......object - 3......");
+
+    const updatedBlogs = allBlogs.map((blog) => ({
+      ...blog,
+      likedByMe: likedBlogSet.has(blog._id.toString()),
+    }));
+
+    console.log(updatedBlogs);
     return res.json({
       success: true,
-      blogs: allBlogs,
+      blogs: updatedBlogs,
     });
   } catch (error) {
+    console.log(error);
     return res.json({
       success: false,
       message: "Something went wrong!",
@@ -46,13 +71,24 @@ router.get("/get_all_blogs", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id).populate("createdBy");
-    const comments = await Comment.find({ blogId: req.params.id }).populate(
-      "createdBy"
-    );
+    const blog = await Blog.findById(req.params.id).populate("createdBy", "fullName email profileImageUrl role").lean();
+    const comments = await Comment.find({ blogId: req.params.id })
+      .populate("createdBy")
+      ;
+
+    console.log("......object - 1......");
+
+    const userLike = await Like.find({
+      userId: req.user._id,
+      blogId: blog._id,
+    }).select("blogId");
+
+    console.log("......object - 2......");
+
+    console.log("......object - 4......");
     return res.json({
       success: true,
-      blog: blog,
+      blog: { ...blog, likedByMe: !!userLike.length },
       comments: comments,
     });
   } catch (error) {
@@ -82,5 +118,7 @@ router.post("/comment/:blogId", async (req, res) => {
     });
   }
 });
+
+router.post("/like/:blogId", likeController.toggelLike);
 
 module.exports = router;

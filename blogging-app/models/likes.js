@@ -3,18 +3,19 @@ const mongoose = require("mongoose");
 const likeSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
     },
     blogId: {
-      type: String,
-      reuired: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "blog",
     },
   },
   { timestamps: true }
 );
 
-likeSchema.index({userId:1,blogId:1},{unique:true});
-likeSchema.index({blogId:1});
+likeSchema.index({ userId: 1, blogId: 1 }, { unique: true });
+likeSchema.index({ blogId: 1 });
 
-module.exports = mongoose.model("like", likeSchema);
+const Like= mongoose.model("like", likeSchema);
+module.exports =Like;

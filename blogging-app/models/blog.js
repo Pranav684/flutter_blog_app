@@ -22,7 +22,7 @@ const blogSchema = new Schema(
       type: String,
       required: false,
     },
-    likes: {
+    likesCount: {
       type: Number,
       default:0,
       min:0,
