@@ -36,6 +36,11 @@ const blogSchema = new Schema(
     timestamps: true,
   }
 );
+// Date sorting index
+blogSchema.index({ createdAt: -1 });
+
+// Optional: text search index (better than regex)
+blogSchema.index({ title: "text", body: "text" });
 
 const Blog = model("blog", blogSchema);
 module.exports = Blog;

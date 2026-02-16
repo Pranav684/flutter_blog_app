@@ -119,6 +119,90 @@ router.post("/comment/:blogId", async (req, res) => {
   }
 });
 
+router.get("/get_blogs", async (req, res) => {
+  try {
+
+    const { search, sort, author } = req.query;
+
+    let query = {};
+    let sortOption = {};
+
+    /**
+     * 🔎 SEARCH
+     */
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { body: { $regex: search, $options: "i" } }
+      ];
+
+      // If you want text index instead (better performance):
+      // query.$text = { $search: search };
+    }
+
+    /**
+     * 👤 FILTER BY AUTHOR
+     */
+    if (author) {
+      query.createdBy = author;
+    }
+
+    /**
+     * 🔄 SORTING
+     */
+    if (sort === "oldest") {
+      sortOption.createdAt = 1;
+    } else if (sort === "mostLiked") {
+      sortOption.likesCount = -1;
+    } else {
+      // Default → newest
+      sortOption.createdAt = -1;
+    }
+
+    /**
+     * 📦 FETCH BLOGS
+     */
+    const blogs = await Blog.find(query)
+      .populate("createdBy", "fullName email")
+      .sort(sortOption)
+      .lean();
+
+    /**
+     * ❤️ ADD likedByMe
+     */
+    let likedBlogSet = new Set();
+
+    if (req.user && blogs.length > 0) {
+      const userLikes = await Like.find({
+        userId: req.user._id,
+        blogId: { $in: blogs.map(blog => blog._id) }
+      }).select("blogId -_id");
+
+      likedBlogSet = new Set(
+        userLikes.map(like => String(like.blogId))
+      );
+    }
+
+    const updatedBlogs = blogs.map(blog => ({
+      ...blog,
+      likedByMe: likedBlogSet.has(String(blog._id))
+    }));
+
+    return res.status(200).json({
+      success: true,
+      blogs: updatedBlogs
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching blogs"
+    });
+  }
+});
+
+
 router.post("/like/:blogId", likeController.toggelLike);
 
 module.exports = router;
