@@ -2,6 +2,7 @@ import 'package:blog_app/add_blogs/screens/add_blog.dart';
 import 'package:blog_app/feed/screens/feed_screen.dart';
 import 'package:blog_app/home/screens/menu_screen.dart';
 import 'package:blog_app/profile/screens/profile_screen.dart';
+import 'package:blog_app/search_blog/screen/search_screen.dart';
 import 'package:blog_app/utility/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,7 +67,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                     alignment: AlignmentGeometry.bottomCenter,
                     children: [
                       bottomNavigationBarCurrentIndex == 1
-                          ? AddBlogScreen()
+                          ? SearchScreen()
                           : bottomNavigationBarCurrentIndex == 2
                           ? ProfileScreen()
                           : FeedScreen(toggleMenu: toggleMenu,),
